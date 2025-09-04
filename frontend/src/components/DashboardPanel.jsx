@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
 import { Progress } from "./ui/progress";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Wifi, Bluetooth, Battery, Gauge, Thermometer } from "lucide-react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -14,22 +13,16 @@ const GLB_URL = "https://customer-assets.emergentagent.com/job_smart-truck-ui/ar
 
 const DashboardPanel = () => {
   const [systemStatus] = useState({ battery: 78, range: 456, connectivity: true, health: 97, cycles: 1247 });
-  const [showBattery, setShowBattery] = useState(false);
-  const [loading3D, setLoading3D] = useState(true);
-
+  const [glbState, setGlbState] = useState({ status: "loading", error: null, cause: null });
   const mountRef = useRef(null);
 
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
-    let renderer, scene, camera, controls, frameId;
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    let modelGroup = null;
-    let clickableParts = [];
-    let placeholder = null;
+    let renderer, scene, camera, controls, frameId, timeoutId;
 
+    // Sizes
     const sizes = {
       width: container.clientWidth || 800,
       height: container.clientHeight || 450,
@@ -64,121 +57,81 @@ const DashboardPanel = () => {
     controls.dampingFactor = 0.08;
     controls.target.set(0, 1.2, 0);
 
-    // Helpers
+    // Grid helper (solo visual)
     const grid = new THREE.GridHelper(40, 40, 0x123744, 0x0c2a33);
     scene.add(grid);
 
-    // Fit camera helper
+    // Fit camera to object
     function fitToObject(object) {
       const box = new THREE.Box3().setFromObject(object);
-      const size = new THREE.Vector3(); box.getSize(size);
-      const center = new THREE.Vector3(); box.getCenter(center);
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const fov = camera.fov * (Math.PI / 180);
-      let cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
-      cameraZ *= 1.4;
-      camera.position.set(center.x + cameraZ * 0.35, center.y + cameraZ * 0.3, center.z + cameraZ);
-      controls.target.copy(new THREE.Vector3(center.x, center.y + size.y * 0.1, center.z));
-      controls.update();
+      if (!box.isEmpty()) {
+        const size = new THREE.Vector3(); box.getSize(size);
+        const center = new THREE.Vector3(); box.getCenter(center);
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const fov = camera.fov * (Math.PI / 180);
+        let cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
+        cameraZ *= 1.4;
+        camera.position.set(center.x + cameraZ * 0.35, center.y + cameraZ * 0.3, center.z + cameraZ);
+        controls.target.copy(new THREE.Vector3(center.x, center.y + size.y * 0.1, center.z));
+        controls.update();
+      }
     }
 
-    // Placeholder simple (por si falla GLB)
-    function buildPlaceholder() {
-      const group = new THREE.Group();
-      const mat = new THREE.MeshStandardMaterial({ color: 0x2dd4bf, metalness: 0.1, roughness: 0.3, opacity: 0.7, transparent: true });
-      const body = new THREE.Mesh(new THREE.BoxGeometry(5.2, 1.0, 2.2), mat); body.position.y = 1.2; group.add(body);
-      const cabin = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.0, 2.1), mat); cabin.position.set(-0.8, 1.8, 0); group.add(cabin);
-      const bed = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.0, 2.15), mat); bed.position.set(1.2, 1.5, 0); group.add(bed);
-      function wheel(x,z){ const m = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.18, 12, 24), mat); m.rotation.x = Math.PI/2; m.position.set(x, 0.65, z); group.add(m); }
-      wheel(-1.6,  1.05); wheel(-1.6, -1.05); wheel( 1.8,  1.05); wheel( 1.8, -1.05);
-      group.name = 'placeholder';
-      scene.add(group);
-      fitToObject(group);
-      return group;
-    }
-
-    // GLB loader
+    // GLB loader with Draco/Meshopt
     const manager = new THREE.LoadingManager();
+    manager.onLoad = () => {};
+    manager.onError = () => {};
+
     const loader = new GLTFLoader(manager);
     loader.setCrossOrigin('anonymous');
-    // Soporte GLB comprimidos
     try {
       const draco = new DRACOLoader();
-      // Usa CDN oficial de Draco para los decoders; si prefieres offline, puedo moverlos a /public/draco
       draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
       loader.setDRACOLoader(draco);
       loader.setMeshoptDecoder(MeshoptDecoder);
-    } catch (e) {
-      // Si DRACO/Meshopt no están disponibles, continúa sin compresión
-    }
+    } catch (_) {}
 
-    manager.onLoad = () => { setLoading3D(false); };
-    manager.onError = () => { setLoading3D(false); };
+    // 8s timeout policy (2a)
+    timeoutId = window.setTimeout(() => {
+      if (glbState.status === 'loading') {
+        setGlbState({ status: 'error', error: 'Timeout al cargar el GLB (8s).', cause: 'timeout' });
+      }
+    }, 8000);
 
+    // Load model
     loader.load(
       GLB_URL,
       (gltf) => {
-        modelGroup = gltf.scene || gltf.scenes?.[0];
-        if (!modelGroup) {
-          placeholder = buildPlaceholder();
-          return;
+        try {
+          const modelGroup = gltf.scene || gltf.scenes?.[0];
+          if (!modelGroup) {
+            setGlbState({ status: 'error', error: 'GLB sin escena válida.', cause: 'empty_scene' });
+            return;
+          }
+          scene.add(modelGroup);
+          modelGroup.traverse((o) => {
+            if (o.isMesh) {
+              o.castShadow = false;
+              o.receiveShadow = false;
+              o.frustumCulled = true;
+            }
+          });
+          fitToObject(modelGroup);
+          setGlbState({ status: 'ready', error: null, cause: null });
+        } catch (e) {
+          setGlbState({ status: 'error', error: e?.message || String(e), cause: 'exception_processing' });
+        } finally {
+          if (timeoutId) window.clearTimeout(timeoutId);
         }
-        scene.add(modelGroup);
-        modelGroup.traverse((o) => {
-          if (o.isMesh) {
-            o.castShadow = false;
-            o.receiveShadow = false;
-            o.frustumCulled = true;
-          }
-        });
-        fitToObject(modelGroup);
-
-        // Detect battery nodes
-        const batteryCandidates = [];
-        modelGroup.traverse((o) => {
-          if (!o.name) return;
-          const n = o.name.toLowerCase();
-          if (n.includes('batt') || n.includes('battery') || n.includes('bater') || n.includes('batería') || n.includes('bateria') || n.includes('accu') || n.includes('pack')) {
-            batteryCandidates.push(o);
-          }
-        });
-        clickableParts = batteryCandidates.length > 0 ? batteryCandidates : [modelGroup];
       },
       undefined,
-      () => {
-        // Fallback silencioso
-        placeholder = buildPlaceholder();
+      (err) => {
+        if (timeoutId) window.clearTimeout(timeoutId);
+        setGlbState({ status: 'error', error: err?.message || 'Fallo en loader.load', cause: 'onError' });
       }
     );
 
-    // Interaction
-    const onMouseMove = (e) => {
-      const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-    };
-
-    const onClick = () => {
-      const targets = clickableParts && clickableParts.length > 0 ? clickableParts : (placeholder ? [placeholder] : []);
-      if (targets.length === 0) return;
-      raycaster.setFromCamera(mouse, camera);
-      const hits = raycaster.intersectObjects(targets, true);
-      if (hits.length > 0) {
-        setShowBattery(true);
-      }
-    };
-
-    const onDblClick = () => {
-      const obj = modelGroup || placeholder;
-      if (!obj) return;
-      fitToObject(obj);
-    };
-
-    renderer.domElement.addEventListener('mousemove', onMouseMove);
-    renderer.domElement.addEventListener('click', onClick);
-    renderer.domElement.addEventListener('dblclick', onDblClick);
-
-    // Loop
+    // Render loop
     const animate = () => {
       frameId = requestAnimationFrame(animate);
       controls.update();
@@ -197,13 +150,10 @@ const DashboardPanel = () => {
     };
     window.addEventListener('resize', onResize);
 
+    // Cleanup
     return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
       window.removeEventListener('resize', onResize);
-      if (renderer?.domElement) {
-        renderer.domElement.removeEventListener('mousemove', onMouseMove);
-        renderer.domElement.removeEventListener('click', onClick);
-        renderer.domElement.removeEventListener('dblclick', onDblClick);
-      }
       if (frameId) cancelAnimationFrame(frameId);
       controls?.dispose();
       renderer?.dispose();
@@ -211,13 +161,8 @@ const DashboardPanel = () => {
         container.removeChild(renderer.domElement);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const bottomOptions = [
-    "Navegación", "Asiento", "Luces", "Ventanas", "Carga",
-    "ISOFIX", "Seguridad", "Conexión", "Notificaciones",
-    "Voz", "Pantalla", "Personalización"
-  ];
 
   const autonomyKm = Math.round(systemStatus.battery * 7.5);
 
@@ -238,11 +183,23 @@ const DashboardPanel = () => {
 
       {/* Main area */}
       <div className="flex-1 flex flex-col sm:flex-row gap-4 py-4">
-        {/* Vehicle 3D (GLB/Placeholder) */}
+        {/* Vehicle 3D (GLB only) */}
         <div className="flex-1 flex items-center justify-center p-0 sm:p-2 min-h-[360px]">
-          <div ref={mountRef} className="relative w-full h-[380px] sm:h-[460px] rounded-md overflow-hidden border border-slate-800">
-            {loading3D && (
-              <div className="absolute inset-0 flex items-center justify-center text-cyan-200/80 text-xs bg-black/10 pointer-events-none">Cargando 3D…</div>
+          <div
+            ref={mountRef}
+            className="relative w-full h-[380px] sm:h-[460px] rounded-md overflow-hidden border border-slate-800"
+            data-glb-state={glbState.status}
+            data-glb-cause={glbState.cause || ''}
+          >
+            {glbState.status === 'loading' && (
+              <div className="absolute inset-0 flex items-center justify-center text-cyan-200/80 text-xs bg-black/10 pointer-events-none">
+                Cargando 3D…
+              </div>
+            )}
+            {glbState.status === 'error' && (
+              <div className="absolute inset-0 flex items-center justify-center text-red-300 text-xs bg-red-900/10 pointer-events-none">
+                No se pudo cargar el modelo
+              </div>
             )}
           </div>
         </div>
@@ -285,53 +242,13 @@ const DashboardPanel = () => {
       {/* Bottom quick functions */}
       <div className="h-16 sm:h-20 bg-gray-900 border-t border-gray-700 px-2 sm:px-4 py-2 rounded-md">
         <div className="flex gap-1 sm:gap-2 overflow-x-auto">
-          {bottomOptions.map((option, i) => (
+          {["Navegación","Asiento","Luces","Ventanas","Carga","ISOFIX","Seguridad","Conexión","Notificaciones","Voz","Pantalla","Personalización"].map((option, i) => (
             <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center w-14 sm:w-16 h-10 sm:h-12 text-xs text-gray-300 bg-gray-800 rounded">
               <span className="text-[10px] leading-none">{option.split(" ")[0]}</span>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Modal de datos de Batería (abre al clic) */}
-      <Dialog open={showBattery} onOpenChange={setShowBattery}>
-        <DialogContent className="bg-slate-900 border-slate-700 text-white">
-          <DialogHeader>
-            <DialogTitle>Estado de Batería</DialogTitle>
-            <DialogDescription>Detalle de carga, autonomía y salud</DialogDescription>
-          </DialogHeader>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
-            <Card className="bg-slate-800/50 border-slate-600">
-              <CardContent className="p-4 text-center">
-                <div className="text-sm text-slate-400 mb-1">Nivel</div>
-                <div className="text-3xl font-bold text-green-400 mb-2">{systemStatus.battery}%</div>
-                <Progress value={systemStatus.battery} className="h-2" />
-              </CardContent>
-            </Card>
-            <Card className="bg-slate-800/50 border-slate-600">
-              <CardContent className="p-4 text-center">
-                <div className="text-sm text-slate-400 mb-1">Autonomía Estimada</div>
-                <div className="text-3xl font-bold text-cyan-400 mb-2">{autonomyKm} km</div>
-                <div className="text-xs text-slate-500">≈ 7.5 km por % de carga</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-slate-800/50 border-slate-600">
-              <CardContent className="p-4 text-center">
-                <div className="text-sm text-slate-400 mb-1">Salud</div>
-                <div className="text-3xl font-bold text-blue-400 mb-2">{systemStatus.health}%</div>
-                <div className="text-xs text-slate-500">Ciclos: {systemStatus.cycles}</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-slate-800/50 border-slate-600">
-              <CardContent className="p-4 text-center">
-                <div className="text-sm text-slate-400 mb-1">Tiempo a 100%</div>
-                <div className="text-3xl font-bold text-yellow-400 mb-2">{Math.max(0, 100 - systemStatus.battery)} min</div>
-                <div className="text-xs text-slate-500">Carga rápida 1%/min (sim)</div>
-              </CardContent>
-            </Card>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
