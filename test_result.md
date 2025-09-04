@@ -290,6 +290,22 @@ frontend:
         agent: "user"
         comment: "Runtime error en Transmisión Virtual: Cannot read properties of undefined (reading 'rear')"
 
+frontend:
+  - task: "GLB Dashboard Integration and 3D Load"
+    implemented: true
+    working: unknown
+    file: "/app/frontend/src/components/DashboardPanel.jsx"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User cannot see GLB model in dashboard; wants GLB only (no placeholder)."
+      - working: true
+        agent: "main"
+        comment: "Integrated Three.js locally with GLTFLoader + Draco/Meshopt support, orbit controls, autocenter, battery click modal. Preparing automated frontend test."
+
 backend:
   - task: "FastAPI Backend Server"
     implemented: true
