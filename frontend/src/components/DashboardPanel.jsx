@@ -26,13 +26,12 @@ const DashboardPanel = () => {
     const mouse = new THREE.Vector2();
     let modelGroup = null;
     let clickableParts = [];
-    let focusedPart = null;
-    const clock = new THREE.Clock();
+    let placeholder = null;
 
     const sizes = {
       width: container.clientWidth || 800,
       height: container.clientHeight || 450,
-      dpr: Math.min(window.devicePixelRatio || 1, 2)
+      dpr: Math.min(window.devicePixelRatio || 1, 2),
     };
 
     // Scene
@@ -67,14 +66,49 @@ const DashboardPanel = () => {
     const grid = new THREE.GridHelper(40, 40, 0x123744, 0x0c2a33);
     scene.add(grid);
 
-    // Load GLB
-    const loader = new GLTFLoader();
+    // Fit camera helper
+    function fitToObject(object) {
+      const box = new THREE.Box3().setFromObject(object);
+      const size = new THREE.Vector3(); box.getSize(size);
+      const center = new THREE.Vector3(); box.getCenter(center);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const fov = camera.fov * (Math.PI / 180);
+      let cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
+      cameraZ *= 1.4;
+      camera.position.set(center.x + cameraZ * 0.35, center.y + cameraZ * 0.3, center.z + cameraZ);
+      controls.target.copy(new THREE.Vector3(center.x, center.y + size.y * 0.1, center.z));
+      controls.update();
+    }
+
+    // Placeholder simple (por si falla GLB)
+    function buildPlaceholder() {
+      const group = new THREE.Group();
+      const mat = new THREE.MeshStandardMaterial({ color: 0x2dd4bf, metalness: 0.1, roughness: 0.3, opacity: 0.7, transparent: true });
+      const body = new THREE.Mesh(new THREE.BoxGeometry(5.2, 1.0, 2.2), mat); body.position.y = 1.2; group.add(body);
+      const cabin = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.0, 2.1), mat); cabin.position.set(-0.8, 1.8, 0); group.add(cabin);
+      const bed = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.0, 2.15), mat); bed.position.set(1.2, 1.5, 0); group.add(bed);
+      function wheel(x,z){ const m = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.18, 12, 24), mat); m.rotation.x = Math.PI/2; m.position.set(x, 0.65, z); group.add(m); }
+      wheel(-1.6,  1.05); wheel(-1.6, -1.05); wheel( 1.8,  1.05); wheel( 1.8, -1.05);
+      group.name = 'placeholder';
+      scene.add(group);
+      fitToObject(group);
+      return group;
+    }
+
+    // GLB loader
+    const manager = new THREE.LoadingManager();
+    const loader = new GLTFLoader(manager);
+    loader.setCrossOrigin('anonymous');
+
+    manager.onLoad = () => { setLoading3D(false); };
+    manager.onError = () => { setLoading3D(false); };
+
     loader.load(
       GLB_URL,
       (gltf) => {
         modelGroup = gltf.scene || gltf.scenes?.[0];
         if (!modelGroup) {
-          setLoading3D(false);
+          placeholder = buildPlaceholder();
           return;
         }
         scene.add(modelGroup);
@@ -85,42 +119,23 @@ const DashboardPanel = () => {
             o.frustumCulled = true;
           }
         });
+        fitToObject(modelGroup);
 
-        // Auto-center and fit camera
-        const box = new THREE.Box3().setFromObject(modelGroup);
-        const size = new THREE.Vector3(); box.getSize(size);
-        const center = new THREE.Vector3(); box.getCenter(center);
-        modelGroup.position.x += (modelGroup.position.x - center.x);
-        modelGroup.position.y += (modelGroup.position.y - center.y);
-        modelGroup.position.z += (modelGroup.position.z - center.z);
-
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const fov = camera.fov * (Math.PI / 180);
-        let cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
-        cameraZ *= 1.4; // margin
-        camera.position.set(center.x + cameraZ * 0.35, center.y + cameraZ * 0.3, center.z + cameraZ);
-        controls.target.copy(new THREE.Vector3(center.x, center.y + size.y * 0.1, center.z));
-        controls.update();
-
-        // Make battery clickable if present
-        const nameIncludes = (name, substr) => name && name.toLowerCase().includes(substr);
+        // Detect battery nodes
         const batteryCandidates = [];
         modelGroup.traverse((o) => {
           if (!o.name) return;
           const n = o.name.toLowerCase();
-          if (n.includes("batt") || n.includes("battery") || n.includes("bater") || n.includes("batería") || n.includes("bateria") || n.includes("accu") || n.includes("pack")) {
+          if (n.includes('batt') || n.includes('battery') || n.includes('bater') || n.includes('batería') || n.includes('bateria') || n.includes('accu') || n.includes('pack')) {
             batteryCandidates.push(o);
           }
         });
         clickableParts = batteryCandidates.length > 0 ? batteryCandidates : [modelGroup];
-
-        setLoading3D(false);
-        animate();
       },
       undefined,
       () => {
-        // On error: keep area clean, no error overlays, just stop loading
-        setLoading3D(false);
+        // Fallback silencioso
+        placeholder = buildPlaceholder();
       }
     );
 
@@ -132,33 +147,24 @@ const DashboardPanel = () => {
     };
 
     const onClick = () => {
-      if (!clickableParts || clickableParts.length === 0) return;
+      const targets = clickableParts && clickableParts.length > 0 ? clickableParts : (placeholder ? [placeholder] : []);
+      if (targets.length === 0) return;
       raycaster.setFromCamera(mouse, camera);
-      const hits = raycaster.intersectObjects(clickableParts, true);
+      const hits = raycaster.intersectObjects(targets, true);
       if (hits.length > 0) {
         setShowBattery(true);
       }
     };
 
     const onDblClick = () => {
-      // Reset to full model view
-      if (!modelGroup) return;
-      const box = new THREE.Box3().setFromObject(modelGroup);
-      const size = new THREE.Vector3(); box.getSize(size);
-      const center = new THREE.Vector3(); box.getCenter(center);
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const fov = camera.fov * (Math.PI / 180);
-      let cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
-      cameraZ *= 1.4;
-      camera.position.set(center.x + cameraZ * 0.35, center.y + cameraZ * 0.3, center.z + cameraZ);
-      controls.target.copy(new THREE.Vector3(center.x, center.y + size.y * 0.1, center.z));
-      controls.update();
-      focusedPart = null;
+      const obj = modelGroup || placeholder;
+      if (!obj) return;
+      fitToObject(obj);
     };
 
-    renderer.domElement.addEventListener("mousemove", onMouseMove);
-    renderer.domElement.addEventListener("click", onClick);
-    renderer.domElement.addEventListener("dblclick", onDblClick);
+    renderer.domElement.addEventListener('mousemove', onMouseMove);
+    renderer.domElement.addEventListener('click', onClick);
+    renderer.domElement.addEventListener('dblclick', onDblClick);
 
     // Loop
     const animate = () => {
@@ -166,6 +172,7 @@ const DashboardPanel = () => {
       controls.update();
       renderer.render(scene, camera);
     };
+    animate();
 
     // Resize
     const onResize = () => {
@@ -176,14 +183,14 @@ const DashboardPanel = () => {
       camera.aspect = sizes.width / sizes.height;
       camera.updateProjectionMatrix();
     };
-    window.addEventListener("resize", onResize);
+    window.addEventListener('resize', onResize);
 
     return () => {
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener('resize', onResize);
       if (renderer?.domElement) {
-        renderer.domElement.removeEventListener("mousemove", onMouseMove);
-        renderer.domElement.removeEventListener("click", onClick);
-        renderer.domElement.removeEventListener("dblclick", onDblClick);
+        renderer.domElement.removeEventListener('mousemove', onMouseMove);
+        renderer.domElement.removeEventListener('click', onClick);
+        renderer.domElement.removeEventListener('dblclick', onDblClick);
       }
       if (frameId) cancelAnimationFrame(frameId);
       controls?.dispose();
@@ -219,11 +226,11 @@ const DashboardPanel = () => {
 
       {/* Main area */}
       <div className="flex-1 flex flex-col sm:flex-row gap-4 py-4">
-        {/* Vehicle 3D (GLB) */}
+        {/* Vehicle 3D (GLB/Placeholder) */}
         <div className="flex-1 flex items-center justify-center p-0 sm:p-2 min-h-[360px]">
           <div ref={mountRef} className="relative w-full h-[380px] sm:h-[460px] rounded-md overflow-hidden border border-slate-800">
             {loading3D && (
-              <div className="absolute inset-0 flex items-center justify-center text-cyan-200/80 text-xs bg-black/20 pointer-events-none">Cargando 3D…</div>
+              <div className="absolute inset-0 flex items-center justify-center text-cyan-200/80 text-xs bg-black/10 pointer-events-none">Cargando 3D…</div>
             )}
           </div>
         </div>
