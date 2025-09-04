@@ -98,8 +98,6 @@ const DashboardPanel = () => {
 
     // Attempt list: [source, dracoLocalFlag]
     const attempts = [
-      [LOCAL_GLB, true],
-      [LOCAL_GLB, false],
       [REMOTE_GLB, true],
       [REMOTE_GLB, false],
     ];
