@@ -8,8 +8,10 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
+import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 
-const GLB_URL = "https://customer-assets.emergentagent.com/job_smart-truck-ui/artifacts/0qjgybqg_d73c3452-8ad5-46d4-885f-1fad9f44454c.glb";
+const LOCAL_GLB = "/models/truck.glb";
+const REMOTE_GLB = "https://customer-assets.emergentagent.com/job_smart-truck-ui/artifacts/0qjgybqg_d73c3452-8ad5-46d4-885f-1fad9f44454c.glb";
 
 const DashboardPanel = () => {
   const [systemStatus] = useState({ battery: 78, range: 456, connectivity: true, health: 97, cycles: 1247 });
@@ -20,9 +22,9 @@ const DashboardPanel = () => {
     const container = mountRef.current;
     if (!container) return;
 
-    let renderer, scene, camera, controls, frameId, timeoutId;
+    let renderer, scene, camera, controls, frameId;
+    let modelGroup = null;
 
-    // Sizes
     const sizes = {
       width: container.clientWidth || 800,
       height: container.clientHeight || 450,
@@ -57,11 +59,11 @@ const DashboardPanel = () => {
     controls.dampingFactor = 0.08;
     controls.target.set(0, 1.2, 0);
 
-    // Grid helper (solo visual)
+    // Grid
     const grid = new THREE.GridHelper(40, 40, 0x123744, 0x0c2a33);
     scene.add(grid);
 
-    // Fit camera to object
+    // Fit camera helper
     function fitToObject(object) {
       const box = new THREE.Box3().setFromObject(object);
       if (!box.isEmpty()) {
@@ -77,59 +79,78 @@ const DashboardPanel = () => {
       }
     }
 
-    // GLB loader with Draco/Meshopt
-    const manager = new THREE.LoadingManager();
-    manager.onLoad = () => {};
-    manager.onError = () => {};
+    // Build loaders per attempt
+    function buildLoader(useLocalDraco) {
+      const manager = new THREE.LoadingManager();
+      const gltfLoader = new GLTFLoader(manager);
+      gltfLoader.setCrossOrigin('anonymous');
+      try {
+        const draco = new DRACOLoader();
+        draco.setDecoderPath(useLocalDraco ? '/draco/' : 'https://www.gstatic.com/draco/v1/decoders/');
+        gltfLoader.setDRACOLoader(draco);
+        gltfLoader.setMeshoptDecoder(MeshoptDecoder);
+        const ktx2 = new KTX2Loader();
+        ktx2.setTranscoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/basis/');
+        ktx2.detectSupport(renderer);
+        gltfLoader.setKTX2Loader(ktx2);
+      } catch (_) {}
+      return gltfLoader;
+    }
 
-    const loader = new GLTFLoader(manager);
-    loader.setCrossOrigin('anonymous');
-    try {
-      const draco = new DRACOLoader();
-      draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
-      loader.setDRACOLoader(draco);
-      loader.setMeshoptDecoder(MeshoptDecoder);
-    } catch (_) {}
+    // Attempt list: [source, dracoLocalFlag]
+    const attempts = [
+      [LOCAL_GLB, true],
+      [LOCAL_GLB, false],
+      [REMOTE_GLB, true],
+      [REMOTE_GLB, false],
+    ];
 
-    // 8s timeout policy (2a)
-    timeoutId = window.setTimeout(() => {
-      if (glbState.status === 'loading') {
-        setGlbState({ status: 'error', error: 'Timeout al cargar el GLB (8s).', cause: 'timeout' });
-      }
-    }, 8000);
+    const MAX_PER_ATTEMPT_MS = 20000; // agotar herramientas hasta 20s por intento
 
-    // Load model
-    loader.load(
-      GLB_URL,
-      (gltf) => {
-        try {
-          const modelGroup = gltf.scene || gltf.scenes?.[0];
-          if (!modelGroup) {
-            setGlbState({ status: 'error', error: 'GLB sin escena válida.', cause: 'empty_scene' });
-            return;
+    function loadWithTimeout(loader, src, ms) {
+      return new Promise((resolve, reject) => {
+        let done = false;
+        const to = setTimeout(() => {
+          if (!done) {
+            done = true;
+            reject(new Error('timeout'));
           }
+        }, ms);
+        loader.load(
+          src,
+          (gltf) => { if (done) return; done = true; clearTimeout(to); resolve(gltf); },
+          undefined,
+          (err) => { if (done) return; done = true; clearTimeout(to); reject(err || new Error('onError')); }
+        );
+      });
+    }
+
+    async function loadModel() {
+      for (let i = 0; i < attempts.length; i++) {
+        const [src, useLocalDraco] = attempts[i];
+        try {
+          setGlbState({ status: 'loading', error: null, cause: `attempt_${i+1}_${useLocalDraco?'localDraco':'remoteDraco'}` });
+          const loader = buildLoader(useLocalDraco);
+          const gltf = await loadWithTimeout(loader, src, MAX_PER_ATTEMPT_MS);
+          modelGroup = gltf.scene || gltf.scenes?.[0];
+          if (!modelGroup) throw new Error('empty_scene');
           scene.add(modelGroup);
           modelGroup.traverse((o) => {
-            if (o.isMesh) {
-              o.castShadow = false;
-              o.receiveShadow = false;
-              o.frustumCulled = true;
-            }
+            if (o.isMesh) { o.castShadow = false; o.receiveShadow = false; o.frustumCulled = true; }
           });
           fitToObject(modelGroup);
           setGlbState({ status: 'ready', error: null, cause: null });
+          return; // success
         } catch (e) {
-          setGlbState({ status: 'error', error: e?.message || String(e), cause: 'exception_processing' });
-        } finally {
-          if (timeoutId) window.clearTimeout(timeoutId);
+          // proceed to next attempt
+          if (i === attempts.length - 1) {
+            setGlbState({ status: 'error', error: e?.message || String(e), cause: 'exhausted' });
+          }
         }
-      },
-      undefined,
-      (err) => {
-        if (timeoutId) window.clearTimeout(timeoutId);
-        setGlbState({ status: 'error', error: err?.message || 'Fallo en loader.load', cause: 'onError' });
       }
-    );
+    }
+
+    loadModel();
 
     // Render loop
     const animate = () => {
@@ -152,7 +173,6 @@ const DashboardPanel = () => {
 
     // Cleanup
     return () => {
-      if (timeoutId) window.clearTimeout(timeoutId);
       window.removeEventListener('resize', onResize);
       if (frameId) cancelAnimationFrame(frameId);
       controls?.dispose();
@@ -161,7 +181,6 @@ const DashboardPanel = () => {
         container.removeChild(renderer.domElement);
       }
     };
-
   }, []);
 
   const autonomyKm = Math.round(systemStatus.battery * 7.5);
