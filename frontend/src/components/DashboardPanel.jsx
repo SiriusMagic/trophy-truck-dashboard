@@ -161,7 +161,7 @@ const DashboardPanel = () => {
         container.removeChild(renderer.domElement);
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   const autonomyKm = Math.round(systemStatus.battery * 7.5);
