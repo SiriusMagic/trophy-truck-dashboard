@@ -101,6 +101,16 @@ const DashboardPanel = () => {
     const manager = new THREE.LoadingManager();
     const loader = new GLTFLoader(manager);
     loader.setCrossOrigin('anonymous');
+    // Soporte GLB comprimidos
+    try {
+      const draco = new DRACOLoader();
+      // Usa CDN oficial de Draco para los decoders; si prefieres offline, puedo moverlos a /public/draco
+      draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+      loader.setDRACOLoader(draco);
+      loader.setMeshoptDecoder(MeshoptDecoder);
+    } catch (e) {
+      // Si DRACO/Meshopt no están disponibles, continúa sin compresión
+    }
 
     manager.onLoad = () => { setLoading3D(false); };
     manager.onError = () => { setLoading3D(false); };
