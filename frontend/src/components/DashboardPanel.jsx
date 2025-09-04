@@ -11,7 +11,7 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 
 const LOCAL_GLB = "/models/truck.glb";
-const REMOTE_GLB = "https://customer-assets.emergentagent.com/job_smart-truck-ui/artifacts/0qjgybqg_d73c3452-8ad5-46d4-885f-1fad9f44454c.glb";
+const REMOTE_GLB = "https://customer-assets.emergentagent.com/job_smart-truck-ui/artifacts/ilj85os8_49d52b49-e9e3-45da-97f8-0c9758da0b33.glb";
 
 const DashboardPanel = () => {
   const [systemStatus] = useState({ battery: 78, range: 456, connectivity: true, health: 97, cycles: 1247 });
