@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -9,7 +10,7 @@ from pydantic import BaseModel, Field
 from typing import List
 import uuid
 from datetime import datetime
-
+import httpx
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -35,7 +36,7 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
-# Add your routes to the router instead of directly to app
+# Core routes
 @api_router.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -51,6 +52,25 @@ async def create_status_check(input: StatusCheckCreate):
 async def get_status_checks():
     status_checks = await db.status_checks.find().to_list(1000)
     return [StatusCheck(**status_check) for status_check in status_checks]
+
+# Assets proxy: stream remote GLB/GLTF as same-origin to bypass CORS/CDN hiccups
+@api_router.get("/assets/proxy")
+async def assets_proxy(u: str):
+    # Basic allowlist by scheme
+    if not (u.startswith("http://") or u.startswith("https://")):
+        raise HTTPException(status_code=400, detail="Invalid URL")
+    try:
+        async with httpx.AsyncClient(follow_redirects=True, timeout=30.0) as client:
+            r = await client.get(u)
+            if r.status_code != 200:
+                raise HTTPException(status_code=r.status_code, detail=f"Upstream error {r.status_code}")
+            content_type = r.headers.get("content-type", "application/octet-stream")
+            return StreamingResponse(iter([r.content]), media_type=content_type, headers={
+                "Cache-Control": "public, max-age=60",
+                "X-Proxy-Source": u
+            })
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Proxy fetch failed: {str(e)}")
 
 # Include the router in the main app
 app.include_router(api_router)
