@@ -7,6 +7,8 @@ import { Wifi, Bluetooth, Battery, Gauge, Thermometer } from "lucide-react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 
 const GLB_URL = "https://customer-assets.emergentagent.com/job_smart-truck-ui/artifacts/0qjgybqg_d73c3452-8ad5-46d4-885f-1fad9f44454c.glb";
 
