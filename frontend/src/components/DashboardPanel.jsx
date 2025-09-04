@@ -10,7 +10,6 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 
-const LOCAL_GLB = "/models/truck.glb";
 const REMOTE_GLB = "https://customer-assets.emergentagent.com/job_smart-truck-ui/artifacts/ilj85os8_49d52b49-e9e3-45da-97f8-0c9758da0b33.glb";
 
 const DashboardPanel = () => {
