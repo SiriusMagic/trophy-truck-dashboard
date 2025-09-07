@@ -33,6 +33,7 @@ import DashboardPanel from "./DashboardPanel";
 import MinimalDriverDashboard from "./MinimalDriverDashboard";
 import QuickSettingsPanel from "./QuickSettingsPanel";
 import NotificationsPanel from "./NotificationsPanel";
+import VehicleControlPanel from "./VehicleControlPanel";
 
 const FuturisticInterface = () => {
   const [isLandscape, setIsLandscape] = useState(() => window.innerWidth > window.innerHeight);
@@ -85,57 +86,50 @@ const FuturisticInterface = () => {
   // Left panel fixed
   const leftOpen = true;
 
-  // Minimal driver dashboard full screen
+  // Full-screen minimal driver dashboard
   const [showMinimal, setShowMinimal] = useState(false);
 
-  // New: Mobile OS-like panels
+  // Mobile OS-like panels
   const [panelOpen, setPanelOpen] = useState(null); // 'notifications' | 'quick' | null
-  const touchStartX = useRef(null);
-  const touchStartEdge = useRef(null); // 'left' | 'right' | null
+  const [bottomOpen, setBottomOpen] = useState(false); // vehicle control panel
 
-  const EDGE = 40;
-  const THRESH = 60;
+  // Gesture detection
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+  const touchStartEdge = useRef(null); // 'left' | 'right' | 'bottom' | null
+  const EDGE = 40; const THRESH = 60;
 
   const onTouchStart = (e) => {
     if (!e.touches || e.touches.length === 0) return;
-    const x = e.touches[0].clientX;
+    const x = e.touches[0].clientX; const y = e.touches[0].clientY;
     const vw = window.innerWidth || document.documentElement.clientWidth || 0;
-    touchStartX.current = x;
-    touchStartEdge.current = x <= EDGE ? 'left' : x >= vw - EDGE ? 'right' : null;
+    const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+    touchStartX.current = x; touchStartY.current = y;
+    touchStartEdge.current = x <= EDGE ? 'left' : x >= vw - EDGE ? 'right' : y >= vh - EDGE ? 'bottom' : null;
   };
 
   const onTouchEnd = (e) => {
-    if (touchStartX.current == null) return;
+    if (touchStartX.current == null || touchStartY.current == null) return;
     const endX = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : touchStartX.current;
-    const deltaX = endX - touchStartX.current;
+    const endY = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : touchStartY.current;
+    const deltaX = endX - touchStartX.current; const deltaY = endY - touchStartY.current;
 
-    // If a panel is open, allow horizontal swipe to switch
-    if (panelOpen === 'notifications' && deltaX < -THRESH) {
-      setPanelOpen('quick');
-      touchStartX.current = null; touchStartEdge.current = null; return;
-    }
-    if (panelOpen === 'quick' && deltaX > THRESH) {
-      setPanelOpen('notifications');
-      touchStartX.current = null; touchStartEdge.current = null; return;
-    }
+    // Switch between side panels when open
+    if (panelOpen === 'notifications' && deltaX < -THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
+    if (panelOpen === 'quick' && deltaX > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
 
     // Open from edges
-    if (touchStartEdge.current === 'left' && deltaX > THRESH) {
-      setPanelOpen('notifications');
-      touchStartX.current = null; touchStartEdge.current = null; return;
-    }
-    if (touchStartEdge.current === 'right' && deltaX < -THRESH) {
-      setPanelOpen('quick');
-      touchStartX.current = null; touchStartEdge.current = null; return;
-    }
+    if (touchStartEdge.current === 'left' && deltaX > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
+    if (touchStartEdge.current === 'right' && deltaX < -THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
+    if (touchStartEdge.current === 'bottom' && deltaY < -THRESH) { setBottomOpen(true); cleanupTouch(); return; }
 
-    // No edge gesture → Minimal board toggle
-    if (Math.abs(deltaX) > THRESH && touchStartEdge.current === null) {
-      setShowMinimal(true);
-    }
+    // Middle swipe toggles minimal board when no panel is open
+    if (!panelOpen && Math.abs(deltaX) > THRESH && Math.abs(deltaY) < THRESH) { setShowMinimal(true); cleanupTouch(); return; }
 
-    touchStartX.current = null; touchStartEdge.current = null;
+    cleanupTouch();
   };
+
+  const cleanupTouch = () => { touchStartX.current = null; touchStartY.current = null; touchStartEdge.current = null; };
 
   const disabled = !isLandscape;
   const common = { vehicleData, disabled };
@@ -204,7 +198,6 @@ const FuturisticInterface = () => {
       )}
 
       <div className="h-full w-full flex">
-        {/* Left systems panel fixed */}
         <aside className="w-64 bg-slate-900/80 border-r border-slate-800 h-full flex flex-col">
           <div className="px-4 py-3 border-b border-slate-800">
             <div onClick={() => setActiveSection(null)} className="cursor-pointer select-none">
@@ -226,16 +219,22 @@ const FuturisticInterface = () => {
           </nav>
           <div className="px-3 py-2 text-xs text-slate-500 border-t border-slate-800">Horizontal obligatorio</div>
         </aside>
-
-        {/* Main content */}
-        <main className="flex-1 min-w-0 h-full overflow-y-auto">
-          <div className="h-full p-3 sm:p-4">{renderActive()}</div>
-        </main>
+        <main className="flex-1 min-w-0 h-full overflow-y-auto"><div className="h-full p-3 sm:p-4">{renderActive()}</div></main>
       </div>
 
       {/* Overlay panels */}
       <NotificationsPanel open={panelOpen === 'notifications'} onClose={() => setPanelOpen(null)} />
       <QuickSettingsPanel open={panelOpen === 'quick'} onClose={() => setPanelOpen(null)} />
+
+      {/* Bottom vehicle control panel */}
+      <VehicleControlPanel
+        open={bottomOpen}
+        onClose={() => setBottomOpen(false)}
+        motorControls={motorControls}
+        setMotorControls={setMotorControls}
+        currentGear={currentGear}
+        setCurrentGear={setCurrentGear}
+      />
 
       {/* Minimal driver dashboard */}
       {showMinimal && (
