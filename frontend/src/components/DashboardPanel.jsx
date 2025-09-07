@@ -27,8 +27,8 @@ const DashboardPanel = () => {
     let modelGroup = null;
 
     const sizes = {
-      width: container.clientWidth || 800,
-      height: container.clientHeight || 450,
+      width: container.clientWidth || 480,
+      height: container.clientHeight || 280,
       dpr: Math.min(window.devicePixelRatio || 1, 2),
     };
 
@@ -60,9 +60,9 @@ const DashboardPanel = () => {
         const maxDim = Math.max(size.x, size.y, size.z);
         const fov = camera.fov * (Math.PI / 180);
         let cameraZ = Math.abs(maxDim / (2 * Math.tan(fov / 2)));
-        cameraZ *= 1.4;
-        camera.position.set(center.x + cameraZ * 0.35, center.y + cameraZ * 0.3, center.z + cameraZ);
-        controls.target.copy(new THREE.Vector3(center.x, center.y + size.y * 0.1, center.z)); controls.update();
+        cameraZ *= 1.3;
+        camera.position.set(center.x + cameraZ * 0.35, center.y + cameraZ * 0.25, center.z + cameraZ);
+        controls.target.copy(new THREE.Vector3(center.x, center.y + size.y * 0.08, center.z)); controls.update();
       }
     }
 
@@ -124,40 +124,40 @@ const DashboardPanel = () => {
 
     loadModel();
 
-    const animate = () => { frameId = requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); };
+    const animate = () => { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); };
     animate();
 
     const onResize = () => { if (!container) return; sizes.width = container.clientWidth; sizes.height = container.clientHeight; renderer.setSize(sizes.width, sizes.height); camera.aspect = sizes.width / sizes.height; camera.updateProjectionMatrix(); };
     window.addEventListener('resize', onResize);
 
-    return () => { window.removeEventListener('resize', onResize); if (frameId) cancelAnimationFrame(frameId); controls?.dispose(); renderer?.dispose(); if (renderer?.domElement && renderer.domElement.parentNode === container) { container.removeChild(renderer.domElement); } };
+    return () => { window.removeEventListener('resize', onResize); renderer?.dispose(); controls?.dispose(); if (renderer?.domElement && renderer.domElement.parentNode === container) { container.removeChild(renderer.domElement); } };
   }, []);
 
   const autonomyKm = Math.round(systemStatus.battery * 7.5);
 
   return (
     <div className="flex flex-col h-full">
-      <div className="h-12 sm:h-14 bg-gray-900 flex items-center justify-between px-4 sm:px-6 rounded-md">
-        <div className="flex items-center gap-2 sm:gap-3"><span className="text-sm sm:text-base font-bold text-white">BMW Style</span><Badge className="bg-blue-600 text-xs">Dashboard</Badge></div>
-        <div className="flex items-center gap-2 sm:gap-3 text-blue-400"><Wifi size={14} /><Bluetooth size={14} /><span className="text-xs sm:text-sm text-white">{systemStatus.battery}%</span></div>
+      <div className="h-10 sm:h-12 bg-gray-900 flex items-center justify-between px-3 sm:px-6 rounded-md">
+        <div className="flex items-center gap-2 sm:gap-3"><span className="text-xs sm:text-base font-bold text-white">BMW Style</span><Badge className="bg-blue-600 text-[10px] sm:text-xs">Dashboard</Badge></div>
+        <div className="flex items-center gap-2 sm:gap-3 text-blue-400"><Wifi size={12} /><Bluetooth size={12} /><span className="text-[11px] sm:text-sm text-white">{systemStatus.battery}%</span></div>
       </div>
 
-      <div className="flex-1 flex flex-col sm:flex-row gap-4 py-4">
-        <div className="flex-1 flex items-center justify-center p-0 sm:p-2 min-h-[360px]">
-          <div ref={mountRef} className="relative w-full h-[380px] sm:h-[460px] rounded-md overflow-hidden border border-slate-800" data-glb-state={glbState.status} data-glb-cause={glbState.cause || ''}>
-            {glbState.status === 'loading' && (<div className="absolute inset-0 flex items-center justify-center text-cyan-200/80 text-xs bg-black/10 pointer-events-none">Cargando 3D…</div>)}
-            {glbState.status === 'error' && (<div className="absolute inset-0 flex items-center justify-center text-red-300 text-xs bg-red-900/10 pointer-events-none">No se pudo cargar el modelo</div>)}
+      <div className="flex-1 flex flex-col sm:flex-row gap-3 sm:gap-4 py-3 sm:py-4">
+        <div className="flex-1 flex items-center justify-center p-0 sm:p-2 min-h-[260px]">
+          <div ref={mountRef} className="relative w-full h-[300px] sm:h-[420px] rounded-md overflow-hidden border border-slate-800" data-glb-state={glbState.status} data-glb-cause={glbState.cause || ''}>
+            {glbState.status === 'loading' && (<div className="absolute inset-0 flex items-center justify-center text-cyan-200/80 text-[11px] bg-black/10 pointer-events-none">Cargando 3D…</div>)}
+            {glbState.status === 'error' && (<div className="absolute inset-0 flex items-center justify-center text-red-300 text-[11px] bg-red-900/10 pointer-events-none">No se pudo cargar el modelo</div>)}
           </div>
         </div>
 
-        <div className="w-full sm:w-80 space-y-3">
-          <Card className="bg-slate-900/50 border-slate-700"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><Gauge className="w-5 h-5 text-cyan-400" /><Badge variant="outline" className="text-cyan-400 border-cyan-400">Velocidad</Badge></div><div className="text-2xl font-bold text-cyan-400 mb-1">85 km/h</div><Progress value={42} className="h-2" /></CardContent></Card>
-          <Card className="bg-slate-900/50 border-slate-700"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><Battery className="w-5 h-5 text-green-400" /><Badge variant="outline" className="text-green-400 border-green-400">Batería</Badge></div><div className="text-2xl font-bold text-green-400 mb-1">{systemStatus.battery}%</div><Progress value={systemStatus.battery} className="h-2" /></CardContent></Card>
-          <Card className="bg-slate-900/50 border-slate-700"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><Thermometer className="w-5 h-5 text-orange-400" /><Badge variant="outline" className="text-orange-400 border-orange-400">Temperatura</Badge></div><div className="text-2xl font-bold text-orange-400 mb-1">32°C</div><Progress value={64} className="h-2" /></CardContent></Card>
+        <div className="w-full sm:w-80 space-y-2 sm:space-y-3 px-1 sm:px-0">
+          <Card className="bg-slate-900/50 border-slate-700"><CardContent className="p-3 sm:p-4"><div className="flex items-center justify-between mb-1 sm:mb-2"><Gauge className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" /><Badge variant="outline" className="text-[10px] sm:text-xs text-cyan-400 border-cyan-400">Velocidad</Badge></div><div className="text-xl sm:text-2xl font-bold text-cyan-400 mb-1">85 km/h</div><Progress value={42} className="h-2" /></CardContent></Card>
+          <Card className="bg-slate-900/50 border-slate-700"><CardContent className="p-3 sm:p-4"><div className="flex items-center justify-between mb-1 sm:mb-2"><Battery className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" /><Badge variant="outline" className="text-[10px] sm:text-xs text-green-400 border-green-400">Batería</Badge></div><div className="text-xl sm:text-2xl font-bold text-green-400 mb-1">{systemStatus.battery}%</div><Progress value={systemStatus.battery} className="h-2" /></CardContent></Card>
+          <Card className="bg-slate-900/50 border-slate-700"><CardContent className="p-3 sm:p-4"><div className="flex items-center justify-between mb-1 sm:mb-2"><Thermometer className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" /><Badge variant="outline" className="text-[10px] sm:text-xs text-orange-400 border-orange-400">Temperatura</Badge></div><div className="text-xl sm:text-2xl font-bold text-orange-400 mb-1">32°C</div><Progress value={64} className="h-2" /></CardContent></Card>
         </div>
       </div>
 
-      <div className="h-16 sm:h-20 bg-gray-900 border-t border-gray-700 px-2 sm:px-4 py-2 rounded-md"><div className="flex gap-1 sm:gap-2 overflow-x-auto">{["Navegación","Asiento","Luces","Ventanas","Carga","ISOFIX","Seguridad","Conexión","Notificaciones","Voz","Pantalla","Personalización"].map((option, i) => (<div key={i} className="flex-shrink-0 flex flex-col items-center justify-center w-14 sm:w-16 h-10 sm:h-12 text-xs text-gray-300 bg-gray-800 rounded"><span className="text-[10px] leading-none">{option.split(" ")[0]}</span></div>))}</div></div>
+      <div className="h-14 sm:h-16 bg-gray-900 border-t border-gray-700 px-2 sm:px-4 py-2 rounded-md"><div className="flex gap-1 sm:gap-2 overflow-x-auto">{["Navegación","Asiento","Luces","Ventanas","Carga","ISOFIX","Seguridad","Conexión","Notificaciones","Voz","Pantalla","Personalización"].map((option, i) => (<div key={i} className="flex-shrink-0 flex flex-col items-center justify-center w-14 sm:w-16 h-10 sm:h-12 text-[11px] sm:text-xs text-gray-300 bg-gray-800 rounded"><span className="leading-none">{option.split(' ')[0]}</span></div>))}</div></div>
     </div>
   );
 };

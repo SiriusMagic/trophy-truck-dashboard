@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Eye,
   Shield,
@@ -21,10 +21,12 @@ import {
   Radar,
   Gauge,
   RotateCcw,
-  Smartphone
+  Smartphone,
+  ChevronLeft,
+  ChevronRight,
+  Menu
 } from "lucide-react";
 
-// Sistemas (24) - excluimos VehicleInterface y FuturisticInterface
 import ReconnaissanceSystem from "./ReconnaissanceSystem";
 import SecuritySystem from "./SecuritySystem";
 import CrabModeSystem from "./CrabModeSystem";
@@ -48,14 +50,12 @@ import BionicCooling from "./BionicCooling";
 import SuspensionControl from "./SuspensionControl";
 import SituationalAwareness from "./SituationalAwareness";
 import AdvancedDiagnostics from "./AdvancedDiagnostics";
-import VirtualTransmission from "./VirtualTransmission"; // para completar 24
+import VirtualTransmission from "./VirtualTransmission";
 import { mockData } from "../data/mockData";
 import DashboardPanel from "./DashboardPanel";
 
 const FuturisticInterface = () => {
-  // Forzar paisaje (landscape) con overlay bloqueante
   const [isLandscape, setIsLandscape] = useState(() => window.innerWidth > window.innerHeight);
-
   useEffect(() => {
     const onResize = () => setIsLandscape(window.innerWidth > window.innerHeight);
     window.addEventListener("resize", onResize);
@@ -66,9 +66,9 @@ const FuturisticInterface = () => {
     };
   }, []);
 
-  // Estado base compartido para sistemas que lo requieren
-  const [vehicleData, setVehicleData] = useState(mockData);
-  const [powerControlMode, setPowerControlMode] = useState("axle"); // 'axle' | 'individual' | 'ai'
+  // Estado base compartido para sistemas
+  const [vehicleData] = useState(mockData);
+  const [powerControlMode, setPowerControlMode] = useState("axle");
   const [powerDistribution, setPowerDistribution] = useState([60, 40]);
   const [motorControls, setMotorControls] = useState({
     rear: { voltage: 400, amperage: 150 },
@@ -82,16 +82,8 @@ const FuturisticInterface = () => {
   });
   const [aiPowerActive, setAiPowerActive] = useState(false);
   const [currentGear, setCurrentGear] = useState(2);
-  const [bionicCooling, setBionicCooling] = useState({
-    active: true,
-    temperature: -15,
-    pulseRate: 72,
-    arterialPressure: 85,
-    venousReturn: 92,
-    cryoFluidLevel: 94
-  });
 
-  // Definir 24 secciones (icono + nombre)
+  // Secciones
   const sections = useMemo(
     () => [
       { id: "reconnaissance", name: "Reconocimiento", icon: Eye },
@@ -117,19 +109,37 @@ const FuturisticInterface = () => {
       { id: "suspension", name: "Suspensión", icon: Mountain },
       { id: "awareness", name: "Sensores", icon: Radar },
       { id: "diagnostics", name: "Diagnósticos", icon: Activity },
-      { id: "transmission", name: "Transmisión", icon: Gauge } // para completar 24
+      { id: "transmission", name: "Transmisión", icon: Gauge }
     ],
     []
   );
 
-  // null = Dashboard principal; una id del array = sección
+  // Estado: null = dashboard, si no id sección
   const [activeSection, setActiveSection] = useState(null);
 
-  const disabled = !isLandscape; // bloquea interacciones detrás del overlay
+  // Panel lateral (panel de sistemas) deslizante
+  const [leftOpen, setLeftOpen] = useState(() => window.innerWidth >= 768); // abierto en pantallas grandes
+  const touchStartX = useRef(null);
 
+  const onTouchStart = (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX.current = e.touches[0].clientX;
+    }
+  };
+  const onTouchEnd = (e) => {
+    if (touchStartX.current == null) return;
+    const endX = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : touchStartX.current;
+    const deltaX = endX - touchStartX.current;
+    if (deltaX < -50) setLeftOpen(false); // deslizar a la izquierda: ocultar
+    if (deltaX > 50) setLeftOpen(true); // deslizar a la derecha: mostrar
+    touchStartX.current = null;
+  };
+
+  const disabled = !isLandscape; // bloqueo por orientación
+
+  const common = { vehicleData, disabled };
   const renderActive = () => {
     if (!activeSection) return <DashboardPanel />;
-    const common = { vehicleData, disabled };
     switch (activeSection) {
       case "reconnaissance":
         return <ReconnaissanceSystem {...common} />;
@@ -179,12 +189,12 @@ const FuturisticInterface = () => {
             individualMotorControls={individualMotorControls}
             setIndividualMotorControls={setIndividualMotorControls}
             aiPowerActive={aiPowerActive}
-            setAiPowerActive={() => setAiPowerActive(v => !v)}
+            setAiPowerActive={() => setAiPowerActive((v) => !v)}
             disabled={disabled}
           />
         );
       case "cooling":
-        return <BionicCooling bionicCooling={bionicCooling} setBionicCooling={setBionicCooling} vehicleData={vehicleData} disabled={disabled} />;
+        return <BionicCooling {...common} />;
       case "suspension":
         return <SuspensionControl {...common} />;
       case "awareness":
@@ -207,32 +217,58 @@ const FuturisticInterface = () => {
   };
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-white overflow-hidden">
-      {/* Overlay para forzar orientación horizontal */}
+    <div
+      className="h-screen w-screen bg-slate-950 text-white overflow-hidden"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
       {!isLandscape && (
         <div className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center text-center p-6">
           <div className="flex items-center gap-3 mb-4">
             <RotateCcw className="w-6 h-6 text-cyan-400" />
             <span className="text-xl font-semibold">Gira tu dispositivo</span>
           </div>
-          <div className="text-slate-300 mb-6">
-            Esta experiencia funciona solo en orientación horizontal (landscape)
-          </div>
+          <div className="text-slate-300 mb-6">Esta experiencia funciona solo en orientación horizontal (landscape)</div>
           <div className="flex items-center gap-2 text-slate-400 text-sm">
-            <Smartphone className="w-4 h-4" />
-            Bloqueo activo hasta girar a horizontal
+            <Smartphone className="w-4 h-4" /> Bloqueo activo hasta girar a horizontal
           </div>
         </div>
       )}
 
-      {/* Layout principal: Menú izquierdo + Contenido */}
+      {/* Toggle button flotante para panel de sistemas (solo cuando está oculto) */}
+      {!leftOpen && (
+        <button
+          onClick={() => setLeftOpen(true)}
+          className="fixed top-3 left-3 z-30 bg-slate-900/80 border border-slate-700 rounded-md px-2 py-1 flex items-center gap-1 text-slate-200 hover:bg-slate-800"
+          aria-label="Mostrar panel de sistemas"
+        >
+          <Menu className="w-4 h-4" />
+          <span className="text-xs hidden xs:inline">Sistemas</span>
+        </button>
+      )}
+
       <div className="h-full w-full flex">
-        {/* Menú lateral izquierdo */}
-        <aside className="w-64 bg-slate-900/80 border-r border-slate-800 h-full flex flex-col">
-          <div className="px-4 py-3 border-b border-slate-800 cursor-pointer" onClick={() => setActiveSection(null)}>
-            <div className="text-lg font-bold">Trophy Truck</div>
-            <div className="text-xs text-slate-400">Panel de Sistemas</div>
-            <div className="text-[10px] text-cyan-400 mt-1">Click para Dashboard</div>
+        {/* Panel de sistemas (lateral izquierdo) */}
+        <aside
+          className={`bg-slate-900/80 border-r border-slate-800 h-full flex flex-col transition-all duration-300 ease-in-out ${
+            leftOpen ? "w-64" : "w-0 border-transparent"
+          } overflow-hidden`}
+          aria-hidden={!leftOpen}
+        >
+          <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+            <div onClick={() => setActiveSection(null)} className="cursor-pointer select-none">
+              <div className="text-lg font-bold">Trophy Truck</div>
+              <div className="text-xs text-slate-400">Panel de Sistemas</div>
+              <div className="text-[10px] text-cyan-400 mt-1">Click para Dashboard</div>
+            </div>
+            <button
+              onClick={() => setLeftOpen(false)}
+              className="p-1 rounded hover:bg-slate-800"
+              aria-label="Ocultar panel"
+              title="Ocultar"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
           </div>
 
           <nav className="flex-1 overflow-y-auto p-2 space-y-1">
@@ -244,9 +280,7 @@ const FuturisticInterface = () => {
                   key={s.id}
                   onClick={() => setActiveSection(s.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
-                    active
-                      ? "bg-cyan-600 text-white"
-                      : "text-slate-300 hover:bg-slate-800"
+                    active ? "bg-cyan-600 text-white" : "text-slate-300 hover:bg-slate-800"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -256,15 +290,27 @@ const FuturisticInterface = () => {
             })}
           </nav>
 
-          <div className="px-3 py-2 text-xs text-slate-500 border-t border-slate-800">
-            Modo: Horizontal obligatorio
+          <div className="px-3 py-2 text-xs text-slate-500 border-t border-slate-800 flex items-center justify-between">
+            <span>Horizontal obligatorio</span>
+            <button
+              onClick={() => setLeftOpen(false)}
+              className="p-1 rounded hover:bg-slate-800"
+              aria-label="Ocultar panel"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
           </div>
         </aside>
 
         {/* Área de contenido */}
-        <main className="flex-1 h-full overflow-y-auto">
-          <div className="h-full p-4">{renderActive()}</div>
+        <main className="flex-1 min-w-0 h-full overflow-y-auto">
+          <div className="h-full p-3 sm:p-4">{renderActive()}</div>
         </main>
+      </div>
+
+      {/* Indicador de gesto (opcional, pantallas muy pequeñas) */}
+      <div className="pointer-events-none select-none fixed bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-slate-500">
+        Desliza ← para ocultar panel · → para mostrar
       </div>
     </div>
   );
