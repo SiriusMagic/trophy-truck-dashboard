@@ -1,29 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Eye,
-  Shield,
-  Move,
-  MapPin,
-  Wind,
-  CircleDot,
-  Target,
-  ArrowUp,
-  Sparkles,
-  Activity,
-  AlertTriangle,
-  Leaf,
-  Battery,
-  ArrowLeftRight,
-  Settings,
-  Car,
-  Heart,
-  Mountain,
-  Radar,
-  Gauge,
-  RotateCcw,
-  Smartphone
+  Eye, Shield, Move, MapPin, Wind, CircleDot, Target, ArrowUp, Sparkles, Activity,
+  AlertTriangle, Leaf, Battery, ArrowLeftRight, Settings, Car, Heart, Mountain, Radar,
+  Gauge, RotateCcw, Smartphone
 } from "lucide-react";
-
 import ReconnaissanceSystem from "./ReconnaissanceSystem";
 import SecuritySystem from "./SecuritySystem";
 import CrabModeSystem from "./CrabModeSystem";
@@ -51,6 +31,8 @@ import VirtualTransmission from "./VirtualTransmission";
 import { mockData } from "../data/mockData";
 import DashboardPanel from "./DashboardPanel";
 import MinimalDriverDashboard from "./MinimalDriverDashboard";
+import QuickSettingsPanel from "./QuickSettingsPanel";
+import NotificationsPanel from "./NotificationsPanel";
 
 const FuturisticInterface = () => {
   const [isLandscape, setIsLandscape] = useState(() => window.innerWidth > window.innerHeight);
@@ -58,13 +40,10 @@ const FuturisticInterface = () => {
     const onResize = () => setIsLandscape(window.innerWidth > window.innerHeight);
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
-    return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("orientationchange", onResize);
-    };
+    return () => { window.removeEventListener("resize", onResize); window.removeEventListener("orientationchange", onResize); };
   }, []);
 
-  // Estado base compartido para sistemas
+  // Base state
   const [vehicleData] = useState(mockData);
   const [powerControlMode, setPowerControlMode] = useState("axle");
   const [powerDistribution, setPowerDistribution] = useState([60, 40]);
@@ -73,7 +52,7 @@ const FuturisticInterface = () => {
   const [aiPowerActive, setAiPowerActive] = useState(false);
   const [currentGear, setCurrentGear] = useState(2);
 
-  // Secciones (24)
+  // Sections
   const sections = useMemo(() => [
     { id: "reconnaissance", name: "Reconocimiento", icon: Eye },
     { id: "security", name: "Seguridad", icon: Shield },
@@ -101,25 +80,61 @@ const FuturisticInterface = () => {
     { id: "transmission", name: "Transmisión", icon: Gauge }
   ], []);
 
-  // Estado: null = dashboard, si no id sección
   const [activeSection, setActiveSection] = useState(null);
 
-  // Panel izquierdo: fijo (sin gestos)
-  const leftOpen = true; // siempre visible
+  // Left panel fixed
+  const leftOpen = true;
 
-  // Tablero minimalista a pantalla completa: aparece con deslizar izquierda/derecha
+  // Minimal driver dashboard full screen
   const [showMinimal, setShowMinimal] = useState(false);
-  const swipeStartX = useRef(null);
 
-  const onTouchStart = (e) => { if (e.touches && e.touches.length > 0) swipeStartX.current = e.touches[0].clientX; };
+  // New: Mobile OS-like panels
+  const [panelOpen, setPanelOpen] = useState(null); // 'notifications' | 'quick' | null
+  const touchStartX = useRef(null);
+  const touchStartEdge = useRef(null); // 'left' | 'right' | null
+
+  const EDGE = 40;
+  const THRESH = 60;
+
+  const onTouchStart = (e) => {
+    if (!e.touches || e.touches.length === 0) return;
+    const x = e.touches[0].clientX;
+    const vw = window.innerWidth || document.documentElement.clientWidth || 0;
+    touchStartX.current = x;
+    touchStartEdge.current = x <= EDGE ? 'left' : x >= vw - EDGE ? 'right' : null;
+  };
+
   const onTouchEnd = (e) => {
-    if (swipeStartX.current == null) return;
-    const endX = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : swipeStartX.current;
-    const deltaX = endX - swipeStartX.current;
-    if (Math.abs(deltaX) > 60) {
+    if (touchStartX.current == null) return;
+    const endX = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : touchStartX.current;
+    const deltaX = endX - touchStartX.current;
+
+    // If a panel is open, allow horizontal swipe to switch
+    if (panelOpen === 'notifications' && deltaX < -THRESH) {
+      setPanelOpen('quick');
+      touchStartX.current = null; touchStartEdge.current = null; return;
+    }
+    if (panelOpen === 'quick' && deltaX > THRESH) {
+      setPanelOpen('notifications');
+      touchStartX.current = null; touchStartEdge.current = null; return;
+    }
+
+    // Open from edges
+    if (touchStartEdge.current === 'left' && deltaX > THRESH) {
+      setPanelOpen('notifications');
+      touchStartX.current = null; touchStartEdge.current = null; return;
+    }
+    if (touchStartEdge.current === 'right' && deltaX < -THRESH) {
+      setPanelOpen('quick');
+      touchStartX.current = null; touchStartEdge.current = null; return;
+    }
+
+    // No edge gesture → Minimal board toggle
+    if (Math.abs(deltaX) > THRESH && touchStartEdge.current === null) {
       setShowMinimal(true);
     }
-    swipeStartX.current = null;
+
+    touchStartX.current = null; touchStartEdge.current = null;
   };
 
   const disabled = !isLandscape;
@@ -189,7 +204,7 @@ const FuturisticInterface = () => {
       )}
 
       <div className="h-full w-full flex">
-        {/* Panel de sistemas fijo (izquierda) */}
+        {/* Left systems panel fixed */}
         <aside className="w-64 bg-slate-900/80 border-r border-slate-800 h-full flex flex-col">
           <div className="px-4 py-3 border-b border-slate-800">
             <div onClick={() => setActiveSection(null)} className="cursor-pointer select-none">
@@ -200,8 +215,7 @@ const FuturisticInterface = () => {
           </div>
           <nav className="flex-1 overflow-y-auto p-2 space-y-1">
             {sections.map((s) => {
-              const Icon = s.icon;
-              const active = s.id === activeSection;
+              const Icon = s.icon; const active = s.id === activeSection;
               return (
                 <button key={s.id} onClick={() => setActiveSection(s.id)} className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${active ? "bg-cyan-600 text-white" : "text-slate-300 hover:bg-slate-800"}`}>
                   <Icon className="w-4 h-4" />
@@ -213,19 +227,20 @@ const FuturisticInterface = () => {
           <div className="px-3 py-2 text-xs text-slate-500 border-t border-slate-800">Horizontal obligatorio</div>
         </aside>
 
-        {/* Contenido */}
+        {/* Main content */}
         <main className="flex-1 min-w-0 h-full overflow-y-auto">
           <div className="h-full p-3 sm:p-4">{renderActive()}</div>
         </main>
       </div>
 
+      {/* Overlay panels */}
+      <NotificationsPanel open={panelOpen === 'notifications'} onClose={() => setPanelOpen(null)} />
+      <QuickSettingsPanel open={panelOpen === 'quick'} onClose={() => setPanelOpen(null)} />
+
+      {/* Minimal driver dashboard */}
       {showMinimal && (
-        <MinimalDriverDashboard
-          currentGear={currentGear}
-          motorControls={motorControls}
-          onExit={() => setShowMinimal(false)}
-        />)
-      }
+        <MinimalDriverDashboard currentGear={currentGear} motorControls={motorControls} onExit={() => setShowMinimal(false)} />
+      )}
     </div>
   );
 };
