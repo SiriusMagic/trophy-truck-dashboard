@@ -44,7 +44,6 @@ const FuturisticInterface = () => {
     return () => { window.removeEventListener("resize", onResize); window.removeEventListener("orientationchange", onResize); };
   }, []);
 
-  // Base state
   const [vehicleData] = useState(mockData);
   const [powerControlMode, setPowerControlMode] = useState("axle");
   const [powerDistribution, setPowerDistribution] = useState([60, 40]);
@@ -53,7 +52,6 @@ const FuturisticInterface = () => {
   const [aiPowerActive, setAiPowerActive] = useState(false);
   const [currentGear, setCurrentGear] = useState(2);
 
-  // Sections
   const sections = useMemo(() => [
     { id: "reconnaissance", name: "Reconocimiento", icon: Eye },
     { id: "security", name: "Seguridad", icon: Shield },
@@ -82,74 +80,22 @@ const FuturisticInterface = () => {
   ], []);
 
   const [activeSection, setActiveSection] = useState(null);
-
-  // Fixed left systems panel
   const leftOpen = true;
 
-  // Full-screen minimal driver dashboard
   const [showMinimal, setShowMinimal] = useState(false);
-
-  // OS-like panels
   const [panelOpen, setPanelOpen] = useState(null); // 'notifications' | 'quick' | null
-  const [bottomOpen, setBottomOpen] = useState(false); // vehicle control panel
-
-  // Gesture detection with window-level listeners to bypass child capture (e.g., Three.js canvas)
-  const touchStartX = useRef(null);
-  const touchStartY = useRef(null);
-  const touchStartEdge = useRef(null); // 'left' | 'right' | 'bottom' | 'top-left' | 'top-right' | null
-  const EDGE = 40; const THRESH = 60;
-
-  useEffect(() => {
-    const onTouchStartWin = (e) => {
-      if (!e.touches || e.touches.length === 0) return;
-      const x = e.touches[0].clientX; const y = e.touches[0].clientY;
-      const vw = window.innerWidth || document.documentElement.clientWidth || 0;
-      const vh = window.innerHeight || document.documentElement.clientHeight || 0;
-      touchStartX.current = x; touchStartY.current = y;
-      if (x <= EDGE) touchStartEdge.current = 'left';
-      else if (x >= vw - EDGE) touchStartEdge.current = 'right';
-      else if (y >= vh - EDGE) touchStartEdge.current = 'bottom';
-      else if (y <= EDGE && x < vw / 2) touchStartEdge.current = 'top-left'; // soporte extra superior
-      else if (y <= EDGE && x >= vw / 2) touchStartEdge.current = 'top-right';
-      else touchStartEdge.current = null;
-    };
-    const onTouchEndWin = (e) => {
-      if (touchStartX.current == null || touchStartY.current == null) return;
-      const endX = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : touchStartX.current;
-      const endY = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : touchStartY.current;
-      const deltaX = endX - touchStartX.current; const deltaY = endY - touchStartY.current;
-
-      // Switch between side panels when open
-      if (panelOpen === 'notifications' && deltaX < -THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
-      if (panelOpen === 'quick' && deltaX > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
-
-      // Open from edges
-      if (touchStartEdge.current === 'left' && deltaX > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
-      if (touchStartEdge.current === 'right' && deltaX < -THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
-      if (touchStartEdge.current === 'bottom' && deltaY < -THRESH) { setBottomOpen(true); cleanupTouch(); return; }
-      if (touchStartEdge.current === 'top-left' && deltaY > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
-      if (touchStartEdge.current === 'top-right' && deltaY > THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
-
-      // Middle swipe toggles minimal board when no panel is open
-      if (!panelOpen && !bottomOpen && Math.abs(deltaX) > THRESH && Math.abs(deltaY) < THRESH) { setShowMinimal(true); cleanupTouch(); return; }
-
-      cleanupTouch();
-    };
-
-    window.addEventListener('touchstart', onTouchStartWin, { passive: true, capture: true });
-    window.addEventListener('touchend', onTouchEndWin, { passive: true, capture: true });
-    return () => {
-      window.removeEventListener('touchstart', onTouchStartWin, { capture: true });
-      window.removeEventListener('touchend', onTouchEndWin, { capture: true });
-    };
-  }, [panelOpen, bottomOpen]);
-
-  const cleanupTouch = () => { touchStartX.current = null; touchStartY.current = null; touchStartEdge.current = null; };
+  const [bottomOpen, setBottomOpen] = useState(false);
 
   const common = { vehicleData, disabled: !isLandscape };
 
   const renderActive = () => {
-    if (!activeSection) return <DashboardPanel />;
+    if (!activeSection) return (
+      <DashboardPanel
+        onOpenNotifications={() => setPanelOpen('notifications')}
+        onOpenQuickSettings={() => setPanelOpen('quick')}
+        onOpenVehicleControl={() => setBottomOpen(true)}
+      />
+    );
     switch (activeSection) {
       case "reconnaissance": return <ReconnaissanceSystem {...common} />;
       case "security": return <SecuritySystem {...common} />;
@@ -211,12 +157,6 @@ const FuturisticInterface = () => {
         </div>
       )}
 
-      {/* Edge touch handles to ensure capture over canvases */}
-      <div className="fixed inset-y-0 left-0 w-3 z-30" />
-      <div className="fixed inset-y-0 right-0 w-3 z-30" />
-      <div className="fixed inset-x-0 bottom-0 h-3 z-30" />
-      <div className="fixed inset-x-0 top-0 h-3 z-30" />
-
       <div className="h-full w-full flex">
         <aside className="w-64 bg-slate-900/80 border-r border-slate-800 h-full flex flex-col">
           <div className="px-4 py-3 border-b border-slate-800">
@@ -242,24 +182,11 @@ const FuturisticInterface = () => {
         <main className="flex-1 min-w-0 h-full overflow-y-auto"><div className="h-full p-3 sm:p-4">{renderActive()}</div></main>
       </div>
 
-      {/* Overlay panels */}
       <NotificationsPanel open={panelOpen === 'notifications'} onClose={() => setPanelOpen(null)} />
       <QuickSettingsPanel open={panelOpen === 'quick'} onClose={() => setPanelOpen(null)} />
+      <VehicleControlPanel open={bottomOpen} onClose={() => setBottomOpen(false)} motorControls={motorControls} setMotorControls={setMotorControls} currentGear={currentGear} setCurrentGear={setCurrentGear} />
 
-      {/* Bottom vehicle control panel */}
-      <VehicleControlPanel
-        open={bottomOpen}
-        onClose={() => setBottomOpen(false)}
-        motorControls={motorControls}
-        setMotorControls={setMotorControls}
-        currentGear={currentGear}
-        setCurrentGear={setCurrentGear}
-      />
-
-      {/* Minimal driver dashboard */}
-      {showMinimal && (
-        <MinimalDriverDashboard currentGear={currentGear} motorControls={motorControls} onExit={() => setShowMinimal(false)} />
-      )}
+      {showMinimal && (<MinimalDriverDashboard currentGear={currentGear} motorControls={motorControls} onExit={() => setShowMinimal(false)} />)}
     </div>
   );
 };
