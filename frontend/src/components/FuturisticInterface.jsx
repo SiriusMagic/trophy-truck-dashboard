@@ -83,56 +83,70 @@ const FuturisticInterface = () => {
 
   const [activeSection, setActiveSection] = useState(null);
 
-  // Left panel fixed
+  // Fixed left systems panel
   const leftOpen = true;
 
   // Full-screen minimal driver dashboard
   const [showMinimal, setShowMinimal] = useState(false);
 
-  // Mobile OS-like panels
+  // OS-like panels
   const [panelOpen, setPanelOpen] = useState(null); // 'notifications' | 'quick' | null
   const [bottomOpen, setBottomOpen] = useState(false); // vehicle control panel
 
-  // Gesture detection
+  // Gesture detection with window-level listeners to bypass child capture (e.g., Three.js canvas)
   const touchStartX = useRef(null);
   const touchStartY = useRef(null);
-  const touchStartEdge = useRef(null); // 'left' | 'right' | 'bottom' | null
+  const touchStartEdge = useRef(null); // 'left' | 'right' | 'bottom' | 'top-left' | 'top-right' | null
   const EDGE = 40; const THRESH = 60;
 
-  const onTouchStart = (e) => {
-    if (!e.touches || e.touches.length === 0) return;
-    const x = e.touches[0].clientX; const y = e.touches[0].clientY;
-    const vw = window.innerWidth || document.documentElement.clientWidth || 0;
-    const vh = window.innerHeight || document.documentElement.clientHeight || 0;
-    touchStartX.current = x; touchStartY.current = y;
-    touchStartEdge.current = x <= EDGE ? 'left' : x >= vw - EDGE ? 'right' : y >= vh - EDGE ? 'bottom' : null;
-  };
+  useEffect(() => {
+    const onTouchStartWin = (e) => {
+      if (!e.touches || e.touches.length === 0) return;
+      const x = e.touches[0].clientX; const y = e.touches[0].clientY;
+      const vw = window.innerWidth || document.documentElement.clientWidth || 0;
+      const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+      touchStartX.current = x; touchStartY.current = y;
+      if (x <= EDGE) touchStartEdge.current = 'left';
+      else if (x >= vw - EDGE) touchStartEdge.current = 'right';
+      else if (y >= vh - EDGE) touchStartEdge.current = 'bottom';
+      else if (y <= EDGE && x < vw / 2) touchStartEdge.current = 'top-left'; // soporte extra superior
+      else if (y <= EDGE && x >= vw / 2) touchStartEdge.current = 'top-right';
+      else touchStartEdge.current = null;
+    };
+    const onTouchEndWin = (e) => {
+      if (touchStartX.current == null || touchStartY.current == null) return;
+      const endX = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : touchStartX.current;
+      const endY = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : touchStartY.current;
+      const deltaX = endX - touchStartX.current; const deltaY = endY - touchStartY.current;
 
-  const onTouchEnd = (e) => {
-    if (touchStartX.current == null || touchStartY.current == null) return;
-    const endX = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : touchStartX.current;
-    const endY = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : touchStartY.current;
-    const deltaX = endX - touchStartX.current; const deltaY = endY - touchStartY.current;
+      // Switch between side panels when open
+      if (panelOpen === 'notifications' && deltaX < -THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
+      if (panelOpen === 'quick' && deltaX > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
 
-    // Switch between side panels when open
-    if (panelOpen === 'notifications' && deltaX < -THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
-    if (panelOpen === 'quick' && deltaX > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
+      // Open from edges
+      if (touchStartEdge.current === 'left' && deltaX > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
+      if (touchStartEdge.current === 'right' && deltaX < -THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
+      if (touchStartEdge.current === 'bottom' && deltaY < -THRESH) { setBottomOpen(true); cleanupTouch(); return; }
+      if (touchStartEdge.current === 'top-left' && deltaY > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
+      if (touchStartEdge.current === 'top-right' && deltaY > THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
 
-    // Open from edges
-    if (touchStartEdge.current === 'left' && deltaX > THRESH) { setPanelOpen('notifications'); cleanupTouch(); return; }
-    if (touchStartEdge.current === 'right' && deltaX < -THRESH) { setPanelOpen('quick'); cleanupTouch(); return; }
-    if (touchStartEdge.current === 'bottom' && deltaY < -THRESH) { setBottomOpen(true); cleanupTouch(); return; }
+      // Middle swipe toggles minimal board when no panel is open
+      if (!panelOpen && !bottomOpen && Math.abs(deltaX) > THRESH && Math.abs(deltaY) < THRESH) { setShowMinimal(true); cleanupTouch(); return; }
 
-    // Middle swipe toggles minimal board when no panel is open
-    if (!panelOpen && Math.abs(deltaX) > THRESH && Math.abs(deltaY) < THRESH) { setShowMinimal(true); cleanupTouch(); return; }
+      cleanupTouch();
+    };
 
-    cleanupTouch();
-  };
+    window.addEventListener('touchstart', onTouchStartWin, { passive: true, capture: true });
+    window.addEventListener('touchend', onTouchEndWin, { passive: true, capture: true });
+    return () => {
+      window.removeEventListener('touchstart', onTouchStartWin, { capture: true });
+      window.removeEventListener('touchend', onTouchEndWin, { capture: true });
+    };
+  }, [panelOpen, bottomOpen]);
 
   const cleanupTouch = () => { touchStartX.current = null; touchStartY.current = null; touchStartEdge.current = null; };
 
-  const disabled = !isLandscape;
-  const common = { vehicleData, disabled };
+  const common = { vehicleData, disabled: !isLandscape };
 
   const renderActive = () => {
     if (!activeSection) return <DashboardPanel />;
@@ -167,7 +181,7 @@ const FuturisticInterface = () => {
           setIndividualMotorControls={setIndividualMotorControls}
           aiPowerActive={aiPowerActive}
           setAiPowerActive={() => setAiPowerActive((v) => !v)}
-          disabled={disabled}
+          disabled={!isLandscape}
         />
       );
       case "cooling": return <BionicCooling {...common} />;
@@ -180,7 +194,7 @@ const FuturisticInterface = () => {
           setCurrentGear={setCurrentGear}
           motorControls={motorControls}
           setMotorControls={setMotorControls}
-          disabled={disabled}
+          disabled={!isLandscape}
         />
       );
       default: return null;
@@ -188,7 +202,7 @@ const FuturisticInterface = () => {
   };
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-white overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+    <div className="h-screen w-screen bg-slate-950 text-white overflow-hidden">
       {!isLandscape && (
         <div className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center text-center p-6">
           <div className="flex items-center gap-3 mb-4"><RotateCcw className="w-6 h-6 text-cyan-400" /><span className="text-xl font-semibold">Gira tu dispositivo</span></div>
@@ -196,6 +210,12 @@ const FuturisticInterface = () => {
           <div className="flex items-center gap-2 text-slate-400 text-sm"><Smartphone className="w-4 h-4" /> Bloqueo activo hasta girar a horizontal</div>
         </div>
       )}
+
+      {/* Edge touch handles to ensure capture over canvases */}
+      <div className="fixed inset-y-0 left-0 w-3 z-30" />
+      <div className="fixed inset-y-0 right-0 w-3 z-30" />
+      <div className="fixed inset-x-0 bottom-0 h-3 z-30" />
+      <div className="fixed inset-x-0 top-0 h-3 z-30" />
 
       <div className="h-full w-full flex">
         <aside className="w-64 bg-slate-900/80 border-r border-slate-800 h-full flex flex-col">
