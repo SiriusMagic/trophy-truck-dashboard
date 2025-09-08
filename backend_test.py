@@ -170,6 +170,73 @@ def test_api_prefix():
         print_result("API Prefix Configuration", False, f"Request error: {str(e)}")
         return False
 
+def test_glb_proxy_functionality():
+    """Test the GLB proxy endpoint for 3D model loading"""
+    print_test_header("GLB Proxy Functionality")
+    
+    # Test valid GLB model URL
+    test_glb_url = "https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf"
+    
+    try:
+        # Test the proxy endpoint with a valid GLB/GLTF URL
+        response = requests.get(
+            f"{BACKEND_URL}/assets/proxy",
+            params={"u": test_glb_url},
+            timeout=30  # GLB files can be large
+        )
+        
+        if response.status_code == 200:
+            # Check if we got binary content (GLB/GLTF files)
+            content_type = response.headers.get('content-type', '')
+            proxy_source = response.headers.get('X-Proxy-Source', '')
+            
+            if proxy_source == test_glb_url:
+                print_result("GLB Proxy Valid URL", True, f"Successfully proxied GLB model, Content-Type: {content_type}")
+            else:
+                print_result("GLB Proxy Valid URL", False, f"Proxy source header mismatch: {proxy_source}")
+                return False
+        else:
+            print_result("GLB Proxy Valid URL", False, f"HTTP {response.status_code}: {response.text}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_result("GLB Proxy Valid URL", False, f"Request error: {str(e)}")
+        return False
+    
+    # Test invalid URL handling
+    try:
+        invalid_url = "ftp://invalid.url/model.glb"
+        response = requests.get(
+            f"{BACKEND_URL}/assets/proxy",
+            params={"u": invalid_url},
+            timeout=TEST_TIMEOUT
+        )
+        
+        if response.status_code == 400:
+            print_result("GLB Proxy Invalid URL", True, "Properly rejected invalid URL scheme")
+        else:
+            print_result("GLB Proxy Invalid URL", False, f"Should reject invalid URL, got: {response.status_code}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_result("GLB Proxy Invalid URL", False, f"Request error: {str(e)}")
+        return False
+    
+    # Test missing URL parameter
+    try:
+        response = requests.get(f"{BACKEND_URL}/assets/proxy", timeout=TEST_TIMEOUT)
+        
+        if response.status_code in [400, 422]:
+            print_result("GLB Proxy Missing Parameter", True, "Properly handled missing URL parameter")
+            return True
+        else:
+            print_result("GLB Proxy Missing Parameter", False, f"Should require URL parameter, got: {response.status_code}")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print_result("GLB Proxy Missing Parameter", False, f"Request error: {str(e)}")
+        return False
+
 def test_error_handling():
     """Test error handling for invalid requests"""
     print_test_header("Error Handling")
