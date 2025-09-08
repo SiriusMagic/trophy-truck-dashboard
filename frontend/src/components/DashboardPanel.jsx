@@ -122,6 +122,15 @@ const DashboardPanel = ({
             <Car className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Control</span>
           </button>
+          {/* Botón Tablero Minimal */}
+          <button
+            onClick={onOpenMinimalDashboard}
+            className="px-2 py-1 bg-purple-600/80 hover:bg-purple-600 text-white rounded-full text-xs flex items-center gap-1"
+            title="Abrir Tablero Minimal"
+          >
+            <Gauge className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Tablero</span>
+          </button>
           <Wifi size={14} />
           <Bluetooth size={14} />
           <span className="text-xs sm:text-sm text-white">{systemStatus.battery}%</span>
