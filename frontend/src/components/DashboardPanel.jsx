@@ -205,6 +205,56 @@ const DashboardPanel = ({
               <Progress value={64} className="h-2" />
             </CardContent>
           </Card>
+          
+          {/* Sistemas de Control */}
+          <Card className="bg-slate-900/50 border-slate-700">
+            <CardContent className="p-4">
+              <div className="mb-3">
+                <Badge variant="outline" className="text-blue-400 border-blue-400">Sistemas</Badge>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {/* Botón Notificaciones */}
+                <button
+                  onClick={onOpenNotifications}
+                  className="flex items-center gap-2 px-3 py-2 bg-blue-600/80 hover:bg-blue-600 text-white rounded-md text-xs transition-colors"
+                  title="Abrir Notificaciones"
+                >
+                  <Bell className="w-4 h-4" />
+                  <span>Notifs</span>
+                </button>
+                
+                {/* Botón Ajustes */}
+                <button
+                  onClick={onOpenQuickSettings}
+                  className="flex items-center gap-2 px-3 py-2 bg-cyan-600/80 hover:bg-cyan-600 text-white rounded-md text-xs transition-colors"
+                  title="Abrir Ajustes rápidos"
+                >
+                  <SlidersHorizontal className="w-4 h-4" />
+                  <span>Ajustes</span>
+                </button>
+                
+                {/* Botón Control */}
+                <button
+                  onClick={onOpenVehicleControl}
+                  className="flex items-center gap-2 px-3 py-2 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded-md text-xs transition-colors"
+                  title="Abrir Control del Vehículo"
+                >
+                  <Car className="w-4 h-4" />
+                  <span>Control</span>
+                </button>
+                
+                {/* Botón Tablero */}
+                <button
+                  onClick={onOpenMinimalDashboard}
+                  className="flex items-center gap-2 px-3 py-2 bg-purple-600/80 hover:bg-purple-600 text-white rounded-md text-xs transition-colors"
+                  title="Abrir Tablero Minimal"
+                >
+                  <Gauge className="w-4 h-4" />
+                  <span>Tablero</span>
+                </button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
