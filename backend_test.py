@@ -272,6 +272,7 @@ def run_all_tests():
         ("Status Endpoints", test_status_endpoints),
         ("CORS Configuration", test_cors_headers),
         ("API Prefix Verification", test_api_prefix),
+        ("GLB Proxy Functionality", test_glb_proxy_functionality),
         ("Error Handling", test_error_handling)
     ]
     
