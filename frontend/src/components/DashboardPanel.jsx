@@ -9,7 +9,8 @@ import { Wifi, Bluetooth, Battery, Gauge, Thermometer, Bell, Settings as Setting
 const DashboardPanel = ({
   onOpenNotifications,
   onOpenQuickSettings,
-  onOpenVehicleControl
+  onOpenVehicleControl,
+  onOpenMinimalDashboard
 }) => {
   const [systemStatus] = useState({ battery: 78, range: 456, connectivity: true, health: 97, cycles: 1247 });
   const [showBattery, setShowBattery] = useState(false);
