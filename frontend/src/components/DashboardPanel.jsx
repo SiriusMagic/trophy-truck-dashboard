@@ -94,46 +94,34 @@ const DashboardPanel = ({
           <span className="text-sm sm:text-base font-bold text-white">BMW Style</span>
           <Badge className="bg-blue-600 text-xs">Dashboard</Badge>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3 text-blue-400">
-          {/* Botón Notificaciones */}
-          <button
-            onClick={onOpenNotifications}
-            className="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded-full text-xs flex items-center gap-1"
-            title="Abrir Notificaciones"
-          >
-            <Bell className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Notifs</span>
-          </button>
-          {/* Botón Ajustes rápidos */}
-          <button
-            onClick={onOpenQuickSettings}
-            className="px-2 py-1 bg-cyan-600/80 hover:bg-cyan-600 text-white rounded-full text-xs flex items-center gap-1"
-            title="Abrir Ajustes rápidos"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Ajustes</span>
-          </button>
-          {/* Botón Control Vehículo */}
-          <button
-            onClick={onOpenVehicleControl}
-            className="px-2 py-1 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded-full text-xs flex items-center gap-1"
-            title="Abrir Control del Vehículo"
-          >
-            <Car className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Control</span>
-          </button>
-          {/* Botón Tablero Minimal */}
-          <button
-            onClick={onOpenMinimalDashboard}
-            className="px-2 py-1 bg-purple-600/80 hover:bg-purple-600 text-white rounded-full text-xs flex items-center gap-1"
-            title="Abrir Tablero Minimal"
-          >
-            <Gauge className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Tablero</span>
-          </button>
+        <div className="flex items-center gap-2 sm:gap-4 text-white">
+          {/* Velocidad */}
+          <div className="flex items-center gap-1 text-cyan-400">
+            <Gauge className="w-4 h-4" />
+            <span className="font-bold">85 km/h</span>
+          </div>
+          {/* RPM */}
+          <div className="flex items-center gap-1 text-green-400">
+            <span className="text-xs">RPM</span>
+            <span className="font-bold">2,850</span>
+          </div>
+          {/* Torque */}
+          <div className="flex items-center gap-1 text-orange-400">
+            <span className="text-xs">Torque</span>
+            <span className="font-bold">420 Nm</span>
+          </div>
+          {/* Temperatura */}
+          <div className="flex items-center gap-1 text-red-400">
+            <Thermometer className="w-4 h-4" />
+            <span className="font-bold">32°C</span>
+          </div>
+          {/* Batería */}
+          <div className="flex items-center gap-1 text-green-400">
+            <Battery className="w-4 h-4" />
+            <span className="font-bold">{systemStatus.battery}%</span>
+          </div>
           <Wifi size={14} />
           <Bluetooth size={14} />
-          <span className="text-xs sm:text-sm text-white">{systemStatus.battery}%</span>
         </div>
       </div>
 
