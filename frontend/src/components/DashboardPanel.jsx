@@ -164,12 +164,11 @@ const DashboardPanel = ({
         {/* Vehicle 3D */}
         <div className="flex-1 flex items-center justify-center p-0 sm:p-2 min-h-[360px]">
           <div className="relative w-full h-[380px] sm:h-[460px] rounded-md overflow-hidden border border-slate-800">
-            <iframe title="HoloTruck3D" srcDoc={sceneHTML} style={{ width: '100%', height: '100%', border: '0' }} />
-            {!sceneReady && !sceneError && (
-              <div className="absolute inset-0 flex items-center justify-center text-cyan-200/80 text-xs bg-black/20 pointer-events-none">Inicializando 3D…</div>
-            )}
-            {sceneError && (
-              <div className="absolute inset-0 p-3 text-red-300 text-xs bg-red-900/20">No se pudo inicializar la escena 3D</div>
+            <div ref={mountRef} className="w-full h-full" />
+            {loadingStatus && (
+              <div className="absolute inset-0 flex items-center justify-center text-cyan-200/80 text-xs bg-black/20 pointer-events-none">
+                {loadingStatus}
+              </div>
             )}
           </div>
         </div>
