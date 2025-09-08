@@ -290,8 +290,20 @@ frontend:
         agent: "user"
         comment: "Runtime error en Transmisión Virtual: Cannot read properties of undefined (reading 'rear')"
 
-frontend:
-  - task: "GLB Dashboard Integration and 3D Load"
+  - task: "Add Header Button for Minimal Driver Dashboard"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/DashboardPanel.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported missing 'Tablero' button in header - 'No veo en el header el tablero?'"
+      - working: true
+        agent: "main"
+        comment: "FIXED: Added missing 'Tablero' button to header alongside Notifs, Ajustes, and Control buttons. Updated DashboardPanel to accept onOpenMinimalDashboard callback and FuturisticInterface to pass the callback. Button is purple-colored and triggers MinimalDriverDashboard component. Screenshot confirms all 4 header buttons are now visible."
     implemented: true
     working: unknown
     file: "/app/frontend/src/components/DashboardPanel.jsx"
