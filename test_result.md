@@ -342,12 +342,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Aerodinámica Intelligent Control System"
-    - "All Vehicle Systems Integration"
-    - "Sliding Panel Navigation with New Aerodinámica Section"
-    - "Complete Trophy Truck Functionality"
+    - "Add Header Button for Minimal Driver Dashboard"
+    - "Dashboard and 3D System Testing"
+    - "Gesture-based Panel Navigation Testing"
+    - "One-click Header Buttons Testing"
+    - "All 24 Vehicle Systems Integration Testing"
   stuck_tasks: []
-  test_all: false
+  test_all: true
   test_priority: "high_first"
 
 agent_communication:
