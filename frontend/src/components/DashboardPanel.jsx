@@ -18,68 +18,98 @@ const DashboardPanel = ({
 }) => {
   const [systemStatus] = useState({ battery: 78, range: 456, connectivity: true, health: 97, cycles: 1247 });
   const [showBattery, setShowBattery] = useState(false);
-  const [sceneReady, setSceneReady] = useState(false);
-  const [sceneError, setSceneError] = useState(null);
-  const sceneHTML = useMemo(() => `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<style>
-  html,body { height:100%; margin:0; background:#060a0f; overflow:hidden; }
-  #app { position:absolute; inset:0; }
-  .hud { position: absolute; left: 12px; top: 10px; color:#7efcff; font: 12px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; opacity:.85; letter-spacing:.5px }
-  .loader { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#8be4ff; font: 12px ui-monospace; background:rgba(0,0,0,.15) }
-  .error { position:absolute; inset:0; padding:12px; color:#ff8b8b; font:12px ui-monospace; background:rgba(120,0,0,.15) }
-</style>
-</head>
-<body>
-  <div id="app"></div>
-  <div class="hud">clic = focus · doble clic = reset</div>
-  <div id="loader" class="loader">Cargando 3D…</div>
-  <div id="err" class="error" style="display:none"></div>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script>
-    (async function(){
-      const app = document.getElementById('app');
-      const loader = document.getElementById('loader');
-      const err = document.getElementById('err');
-      try {
-        const THREE = await import('https://unpkg.com/three@0.160.0/build/three.module.js');
-        const { OrbitControls } = await import('https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js');
-        const scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0x02060b, 0.06);
-        const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 1000); camera.position.set(7,4,8);
-        const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true }); renderer.setSize(innerWidth, innerHeight);
-        renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace; app.appendChild(renderer.domElement);
-        const hemi = new THREE.HemisphereLight(0x9cfaff, 0x0a1e2a, 0.9); scene.add(hemi);
-        const dir = new THREE.DirectionalLight(0x7ff8ff, 1.2); dir.position.set(5,10,7); scene.add(dir);
-        const cyan = new THREE.Color('#4ef3ff'); const holo = new THREE.MeshPhysicalMaterial({ color: cyan, metalness: 0.1, roughness: 0.15, transmission: 0.85, thickness: 0.4, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, envMapIntensity: 0.6 });
-        function addEdges(mesh, color=cyan, strength=1){ const edges = new THREE.EdgesGeometry(mesh.geometry, 35); const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.9 * strength })); line.position.copy(mesh.position); line.rotation.copy(mesh.rotation); line.scale.copy(mesh.scale); mesh.add(line); return line; }
-        const car = new THREE.Group(); scene.add(car);
-        const body = new THREE.Mesh(new THREE.BoxGeometry(5.2, 1.0, 2.2), holo); body.position.y = 1.2; car.add(body); addEdges(body);
-        const cabin = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.0, 2.1), holo); cabin.position.set(-0.8, 1.8, 0); car.add(cabin); addEdges(cabin);
-        const bed = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.0, 2.15), holo); bed.position.set(1.2, 1.5, 0); car.add(bed); addEdges(bed);
-        function wheel(x,z){ const t = new THREE.TorusGeometry(0.65, 0.18, 12, 48); const m = new THREE.Mesh(t, holo); m.rotation.x = Math.PI/2; m.position.set(x,0.65,z); addEdges(m); car.add(m); return m; }
-        wheel(-1.6,1.05); wheel(-1.6,-1.05); wheel(1.8,1.05); wheel(1.8,-1.05);
-        const engine = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.6,0.8), new THREE.MeshPhysicalMaterial({ color:0x7efcff, roughness:0.1, transmission:0.6, opacity:0.6, transparent:true, blending:THREE.AdditiveBlending })); engine.position.set(-2.0,1.1,0); car.add(engine); addEdges(engine,0xffffff,1.4);
-        const grid = new THREE.GridHelper(40, 40, 0x123744, 0x0c2a33); scene.add(grid);
-        const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.dampingFactor = 0.05; controls.target.set(0,1.2,0);
-        function animate(){ requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera);} animate();
-        loader.style.display='none'; parent.postMessage({ type: 'scene_ready' }, '*');
-        addEventListener('resize', ()=>{ camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
-      } catch(e){ loader.style.display='none'; err.style.display='block'; err.textContent = e?.message || String(e); parent.postMessage({ type: 'scene_error' }, '*'); }
-    })();
-  </script>
-</body>
-</html>`, []);
-
+  const mountRef = useRef(null);
+  const sceneRef = useRef(null);
+  const [loadingStatus, setLoadingStatus] = useState('Cargando 3D...');
+  
   useEffect(() => {
-    const onMsg = (ev) => {
-      if (ev?.data?.type === 'scene_ready') { setSceneReady(true); setSceneError(null); }
-      if (ev?.data?.type === 'scene_error') { setSceneReady(false); setSceneError('error'); }
+    if (!mountRef.current) return;
+
+    // Configurar escena Three.js
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x060a0f);
+    
+    const camera = new THREE.PerspectiveCamera(75, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    mountRef.current.appendChild(renderer.domElement);
+
+    // Iluminación
+    const ambientLight = new THREE.AmbientLight(0x4ef3ff, 0.6);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0x7ff8ff, 1);
+    directionalLight.position.set(5, 10, 7);
+    scene.add(directionalLight);
+
+    // Controles
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    // Crear vehículo básico si no hay GLB
+    const vehicleGroup = new THREE.Group();
+    
+    // Cuerpo principal
+    const bodyGeometry = new THREE.BoxGeometry(4, 1, 2);
+    const bodyMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x4ef3ff,
+      metalness: 0.1,
+      roughness: 0.15,
+      transmission: 0.85,
+      thickness: 0.4,
+      transparent: true,
+      opacity: 0.35
+    });
+    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    body.position.y = 1;
+    vehicleGroup.add(body);
+
+    // Ruedas
+    const wheelGeometry = new THREE.TorusGeometry(0.5, 0.15, 12, 48);
+    const wheelMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x4ef3ff,
+      metalness: 0.2,
+      roughness: 0.3,
+      transparent: true,
+      opacity: 0.8
+    });
+    
+    const wheelPositions = [
+      [-1.5, 0.5, 1], [-1.5, 0.5, -1],
+      [1.5, 0.5, 1], [1.5, 0.5, -1]
+    ];
+    
+    wheelPositions.forEach(pos => {
+      const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+      wheel.position.set(pos[0], pos[1], pos[2]);
+      wheel.rotation.z = Math.PI / 2;
+      vehicleGroup.add(wheel);
+    });
+
+    scene.add(vehicleGroup);
+    camera.position.set(5, 3, 5);
+    controls.target.set(0, 1, 0);
+
+    setLoadingStatus('');
+
+    // Animación
+    const animate = () => {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
     };
-    window.addEventListener('message', onMsg);
-    return () => window.removeEventListener('message', onMsg);
+    animate();
+
+    // Cleanup
+    sceneRef.current = { scene, camera, renderer, controls };
+    
+    return () => {
+      if (mountRef.current && renderer.domElement) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+    };
   }, []);
 
   const bottomOptions = [
