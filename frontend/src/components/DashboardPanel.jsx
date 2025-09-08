@@ -4,6 +4,10 @@ import { Card, CardContent } from "./ui/card";
 import { Progress } from "./ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Wifi, Bluetooth, Battery, Gauge, Thermometer, Bell, Settings as SettingsIcon, SlidersHorizontal, Car } from "lucide-react";
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 // Accept optional callbacks to open overlay panels from parent
 const DashboardPanel = ({
