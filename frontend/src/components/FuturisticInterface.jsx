@@ -94,6 +94,7 @@ const FuturisticInterface = () => {
         onOpenNotifications={() => setPanelOpen('notifications')}
         onOpenQuickSettings={() => setPanelOpen('quick')}
         onOpenVehicleControl={() => setBottomOpen(true)}
+        onOpenMinimalDashboard={() => setShowMinimal(true)}
       />
     );
     switch (activeSection) {
