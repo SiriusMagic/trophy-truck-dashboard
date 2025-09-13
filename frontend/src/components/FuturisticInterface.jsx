@@ -137,7 +137,7 @@ const FuturisticInterface = () => {
           disabled={!isLandscape}
         />
       );
-      case "cooling": return <BionicCooling {...common} />;
+      case "cooling": return <BionicCooling {...common} bionicCooling={bionicCooling} setBionicCooling={setBionicCooling} />;
       case "suspension": return <SuspensionControl {...common} />;
       case "awareness": return <SituationalAwareness {...common} />;
       case "diagnostics": return <AdvancedDiagnostics {...common} motorControls={motorControls} />;
