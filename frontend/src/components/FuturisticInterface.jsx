@@ -51,6 +51,12 @@ const FuturisticInterface = () => {
   const [individualMotorControls, setIndividualMotorControls] = useState({ rearLeft: { voltage: 400, amperage: 150 }, rearRight: { voltage: 400, amperage: 150 }, frontLeft: { voltage: 380, amperage: 120 }, frontRight: { voltage: 380, amperage: 120 } });
   const [aiPowerActive, setAiPowerActive] = useState(false);
   const [currentGear, setCurrentGear] = useState(2);
+  const [bionicCooling, setBionicCooling] = useState({
+    active: false,
+    temperature: 25,
+    mode: 'normal',
+    efficiency: 85
+  });
 
   const sections = useMemo(() => [
     { id: "reconnaissance", name: "Reconocimiento", icon: Eye },
