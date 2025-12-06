@@ -16,7 +16,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BACKEND_URL = "https://electric-truck-dash.preview.emergentagent.com/api"
+BACKEND_URL = "https://neurodriver.preview.emergentagent.com/api"
 TEST_TIMEOUT = 10
 
 def print_test_header(test_name):
