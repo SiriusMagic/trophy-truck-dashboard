@@ -157,9 +157,7 @@ const VehicleInterface = () => {
         setVehicleData(prev => ({
           ...prev,
           speed: Math.max(0, prev.speed + (Math.random() - 0.5) * 3),
-          batteryTemp: bionicCooling.active ? 
-            Math.max(15, prev.batteryTemp + (Math.random() - 0.8) * 0.5) : 
-            prev.batteryTemp + (Math.random() - 0.5) * 0.8,
+          batteryTemp: prev.batteryTemp + (Math.random() - 0.5) * 0.8,
           torque: powerControlMode === 'ai' && aiPowerActive ? 
             450 + (Math.random() - 0.5) * 50 :
             (motorControls.rear.amperage + motorControls.front.amperage) + (Math.random() - 0.5) * 15,
@@ -180,21 +178,11 @@ const VehicleInterface = () => {
             rr: 33 + (Math.random() - 0.5) * 2
           }
         }));
-
-        // Update bionic cooling system
-        setBionicCooling(prev => ({
-          ...prev,
-          temperature: prev.active ? -15 + (Math.random() - 0.5) * 3 : prev.temperature + 1,
-          pulseRate: 72 + (Math.random() - 0.5) * 10,
-          arterialPressure: 85 + (Math.random() - 0.5) * 10,
-          venousReturn: 92 + (Math.random() - 0.5) * 5,
-          cryoFluidLevel: Math.max(50, prev.cryoFluidLevel - 0.01)
-        }));
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [motorControls, hibernationMode, bionicCooling.active, powerControlMode, aiPowerActive]);
+  }, [motorControls, hibernationMode, powerControlMode, aiPowerActive]);
 
   const handlePowerControlModeChange = (mode) => {
     setPowerControlMode(mode);
