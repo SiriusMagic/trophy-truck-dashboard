@@ -422,9 +422,7 @@ const VehicleInterface = () => {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-400">Temp:</span>
-                    <span className={`flex items-center ${
-                      bionicCooling.active ? 'text-blue-400' : 'text-orange-400'
-                    }`}>
+                    <span className="flex items-center text-orange-400">
                       <Thermometer className="w-4 h-4 mr-1" />
                       {Math.round(vehicleData.batteryTemp)}°C
                     </span>
