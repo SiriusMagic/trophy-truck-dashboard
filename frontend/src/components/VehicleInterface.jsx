@@ -253,9 +253,6 @@ const VehicleInterface = () => {
         front: { voltage: Math.min(600, prev.front.voltage + 100), amperage: Math.min(300, prev.front.amperage + 50) }
       }));
       
-      // Boost bionic cooling
-      setBionicCooling(prev => ({ ...prev, pulseRate: 120, arterialPressure: 95 }));
-      
       setTimeout(() => {
         setOverdrive(false);
         toast({
