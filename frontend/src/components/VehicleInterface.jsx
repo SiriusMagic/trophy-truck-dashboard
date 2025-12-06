@@ -375,16 +375,6 @@ const VehicleInterface = () => {
             REGEN {regenMode.toUpperCase()}
           </Button>
           
-          <Button 
-            variant={bionicCooling.active ? "default" : "destructive"}
-            onClick={() => setBionicCooling(prev => ({ ...prev, active: !prev.active }))}
-            disabled={hibernationMode}
-            className="h-16 text-lg"
-          >
-            <Snowflake className="w-6 h-6 mr-2" />
-            CRIOGÉNICO
-          </Button>
-          
           <div className="grid grid-cols-3 gap-1">
             {driveProfiles.map((profile) => (
               <Button
