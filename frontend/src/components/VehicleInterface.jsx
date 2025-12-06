@@ -638,14 +638,6 @@ const VehicleInterface = () => {
               disabled={hibernationMode}
             />
           )}
-          {activeSection === 'cooling' && (
-            <BionicCooling 
-              bionicCooling={bionicCooling}
-              setBionicCooling={setBionicCooling}
-              vehicleData={vehicleData}
-              disabled={hibernationMode}
-            />
-          )}
           {activeSection === 'suspension' && (
             <SuspensionControl disabled={hibernationMode} />
           )}
