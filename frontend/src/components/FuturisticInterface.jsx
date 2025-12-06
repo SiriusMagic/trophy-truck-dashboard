@@ -23,7 +23,6 @@ import SmartVehicleControl from "./SmartVehicleControl";
 import ComfortSystems from "./ComfortSystems";
 import AdvancedDriving from "./AdvancedDriving";
 import PowerControlSystem from "./PowerControlSystem";
-import BionicCooling from "./BionicCooling";
 import SuspensionControl from "./SuspensionControl";
 import SituationalAwareness from "./SituationalAwareness";
 import AdvancedDiagnostics from "./AdvancedDiagnostics";
@@ -51,12 +50,6 @@ const FuturisticInterface = () => {
   const [individualMotorControls, setIndividualMotorControls] = useState({ rearLeft: { voltage: 400, amperage: 150 }, rearRight: { voltage: 400, amperage: 150 }, frontLeft: { voltage: 380, amperage: 120 }, frontRight: { voltage: 380, amperage: 120 } });
   const [aiPowerActive, setAiPowerActive] = useState(false);
   const [currentGear, setCurrentGear] = useState(2);
-  const [bionicCooling, setBionicCooling] = useState({
-    active: false,
-    temperature: 25,
-    mode: 'normal',
-    efficiency: 85
-  });
 
   const sections = useMemo(() => [
     { id: "reconnaissance", name: "Reconocimiento", icon: Eye },
@@ -78,7 +71,6 @@ const FuturisticInterface = () => {
     { id: "comfort", name: "Confort", icon: Settings },
     { id: "driving", name: "Conducción", icon: Car },
     { id: "power", name: "Potencia", icon: Battery },
-    { id: "cooling", name: "Criogénico", icon: Heart },
     { id: "suspension", name: "Suspensión", icon: Mountain },
     { id: "awareness", name: "Sensores", icon: Radar },
     { id: "diagnostics", name: "Diagnósticos", icon: Activity },
@@ -137,7 +129,6 @@ const FuturisticInterface = () => {
           disabled={!isLandscape}
         />
       );
-      case "cooling": return <BionicCooling {...common} bionicCooling={bionicCooling} setBionicCooling={setBionicCooling} />;
       case "suspension": return <SuspensionControl {...common} />;
       case "awareness": return <SituationalAwareness {...common} />;
       case "diagnostics": return <AdvancedDiagnostics {...common} motorControls={motorControls} />;
