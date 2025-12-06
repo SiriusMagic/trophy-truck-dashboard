@@ -50,7 +50,6 @@ import SituationalAwareness from './SituationalAwareness';
 import VirtualTransmission from './VirtualTransmission';
 import AdvancedDiagnostics from './AdvancedDiagnostics';
 import PowerControlSystem from './PowerControlSystem';
-import BionicCooling from './BionicCooling';
 import SmartVehicleControl from './SmartVehicleControl';
 import ComfortSystems from './ComfortSystems';
 import AdvancedDriving from './AdvancedDriving';
@@ -99,14 +98,6 @@ const VehicleInterface = () => {
     frontRight: { voltage: 380, amperage: 120 }
   });
   const [aiPowerActive, setAiPowerActive] = useState(false);
-  const [bionicCooling, setBionicCooling] = useState({
-    active: true,
-    temperature: -15, // °C
-    pulseRate: 72, // BPM equivalent
-    arterialPressure: 85, // %
-    venousReturn: 92, // %
-    cryoFluidLevel: 94 // %
-  });
   const [savedConfigs, setSavedConfigs] = useState(presetConfigs);
   const [activeConfig, setActiveConfig] = useState('Custom');
   const [currentGear, setCurrentGear] = useState(2);
@@ -138,7 +129,6 @@ const VehicleInterface = () => {
     { id: 'comfort', name: 'Confort', icon: Settings, color: 'indigo' },
     { id: 'driving', name: 'Conducción', icon: Car, color: 'emerald' },
     { id: 'power', name: 'Potencia', icon: Zap, color: 'yellow' },
-    { id: 'cooling', name: 'Criogénico', icon: Heart, color: 'blue' },
     { id: 'suspension', name: 'Suspensión', icon: Mountain, color: 'orange' },
     { id: 'awareness', name: 'Sensores', icon: Radar, color: 'green' },
     { id: 'diagnostics', name: 'Diagnósticos', icon: Activity, color: 'red' }
