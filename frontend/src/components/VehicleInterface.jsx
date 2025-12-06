@@ -258,27 +258,21 @@ const VehicleInterface = () => {
       
       setTimeout(() => {
         setOverdrive(false);
-        setBionicCooling(prev => ({ ...prev, pulseRate: 72, arterialPressure: 85 }));
         toast({
           title: "Overdrive desactivado",
-          description: "Potencia y refrigeración restauradas",
+          description: "Potencia restaurada",
         });
       }, 30000);
       
       toast({
-        title: "⚡ OVERDRIVE + CRIOGÉNICO ACTIVADO",
-        description: "Potencia máxima con refrigeración biónica acelerada",
+        title: "⚡ OVERDRIVE ACTIVADO",
+        description: "Potencia máxima",
       });
     }
   };
 
   const handleHibernationToggle = () => {
     setHibernationMode(!hibernationMode);
-    setBionicCooling(prev => ({ 
-      ...prev, 
-      active: hibernationMode, 
-      pulseRate: hibernationMode ? 72 : 20 
-    }));
     toast({
       title: hibernationMode ? "Despertar del hibernación" : "Modo hibernación activado",
       description: hibernationMode ? "Todos los sistemas activos" : "Sistemas en modo de bajo consumo",
