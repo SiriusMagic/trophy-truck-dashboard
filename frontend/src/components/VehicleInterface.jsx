@@ -477,35 +477,6 @@ const VehicleInterface = () => {
             </CardContent>
           </Card>
 
-          {/* Bionic Cooling Status */}
-          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <Snowflake className="w-8 h-8 text-blue-400" />
-                <Badge variant="outline" className="text-blue-400 border-blue-400">
-                  CRIOGÉNICO
-                </Badge>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Temp. Crio:</span>
-                  <span className="text-blue-400">{bionicCooling.temperature.toFixed(1)}°C</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Pulso:</span>
-                  <span className="text-purple-400 flex items-center">
-                    <Heart className="w-4 h-4 mr-1" />
-                    {bionicCooling.pulseRate} BPM
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Presión:</span>
-                  <span className="text-cyan-400">{bionicCooling.arterialPressure}%</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Torque & AI Status */}
           <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
             <CardContent className="p-6">
