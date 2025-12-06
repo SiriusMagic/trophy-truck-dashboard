@@ -311,9 +311,6 @@ const VehicleInterface = () => {
             <Badge variant={overdrive ? "destructive" : "outline"} className="text-sm">
               {overdrive ? "⚡ OVERDRIVE" : "NORMAL"}
             </Badge>
-            <Badge variant={bionicCooling.active ? "default" : "destructive"} className="text-sm">
-              {bionicCooling.active ? "❄️ CRIOGÉNICO" : "ENFRIAMIENTO OFF"}
-            </Badge>
             <Badge variant="outline" className="text-sm">
               POTENCIA: {powerControlMode.toUpperCase()}
             </Badge>
