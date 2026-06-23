@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 # ==========================================================
-# run-dev.sh — Levanta backend (:8001) y frontend (:3000)
-# Uso: ./run-dev.sh   (Ctrl+C detiene ambos)
+# run-dev.sh — Levanta el FRONTEND (:3000) y, si existe, el
+# BACKEND opcional (:8001).
+#
+#   ./run-dev.sh              -> frontend + backend (si hay venv)
+#   ./run-dev.sh --front-only -> solo frontend
+#
+# Ctrl+C detiene todo.
 # ==========================================================
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
-if [ ! -d "backend/.venv" ]; then
-  echo "❌ No se encontró backend/.venv. Ejecuta primero ./setup.sh"
-  exit 1
-fi
+FRONT_ONLY=false
+[ "${1:-}" = "--front-only" ] && FRONT_ONLY=true
 
 cleanup() {
   echo ""
@@ -20,13 +23,18 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-echo "==> Iniciando BACKEND en http://localhost:8001"
-(
-  cd backend
-  # shellcheck disable=SC1091
-  source .venv/bin/activate
-  uvicorn server:app --host 0.0.0.0 --port 8001 --reload
-) &
+# Backend OPCIONAL: solo si existe el venv y no se pidió front-only.
+if [ "$FRONT_ONLY" = false ] && [ -d "backend/.venv" ]; then
+  echo "==> Iniciando BACKEND (opcional) en http://localhost:8001"
+  (
+    cd backend
+    # shellcheck disable=SC1091
+    source .venv/bin/activate
+    uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+  ) &
+else
+  echo "==> Modo FRONTEND-ONLY (backend no se inicia)."
+fi
 
 echo "==> Iniciando FRONTEND en http://localhost:3000"
 (

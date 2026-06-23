@@ -4,6 +4,7 @@ import { Card, CardContent } from "./ui/card";
 import { Progress } from "./ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Wifi, Bluetooth, Battery, Gauge, Thermometer, Bell, Settings as SettingsIcon, SlidersHorizontal, Car } from "lucide-react";
+import { useNeuralControls } from "../hooks/useNeuralControls";
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
@@ -20,7 +21,21 @@ const DashboardPanel = ({
   const [showBattery, setShowBattery] = useState(false);
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
+  const neuralRef = useRef({ active: false, animationSpeed: 1, brightness: 0.5 });
   const [loadingStatus, setLoadingStatus] = useState('Cargando 3D...');
+
+  // Control neuronal: cuando está activo, sus salidas reemplazan los valores del dashboard.
+  const { active: neuralActive, controls: neural } = useNeuralControls();
+
+  // Mantener el ref sincronizado para el loop de animación 3D.
+  useEffect(() => {
+    neuralRef.current = {
+      active: neuralActive,
+      animationSpeed: neural.animationSpeed,
+      brightness: neural.brightness,
+    };
+  }, [neuralActive, neural.animationSpeed, neural.brightness]);
+
   
   useEffect(() => {
     if (!mountRef.current) return;
@@ -96,6 +111,13 @@ const DashboardPanel = ({
     // Animación
     const animate = () => {
       requestAnimationFrame(animate);
+      const n = neuralRef.current;
+      if (n.active) {
+        vehicleGroup.rotation.y += 0.01 * (n.animationSpeed || 1);
+        ambientLight.intensity = 0.3 + (n.brightness || 0.5);
+      } else {
+        ambientLight.intensity = 0.6;
+      }
       controls.update();
       renderer.render(scene, camera);
     };
@@ -120,6 +142,13 @@ const DashboardPanel = ({
 
   const autonomyKm = Math.round(systemStatus.battery * 7.5);
 
+  // Valores mostrados: neuronales si la red está activa, si no los de demo.
+  const speed = neuralActive ? Math.round(neural.speed) : 85;
+  const rpm = neuralActive ? Math.round(neural.rpm) : 2850;
+  const torque = neuralActive ? Math.round(neural.torque) : 420;
+  const temp = neuralActive ? Math.round(neural.temperature) : 32;
+  const battery = neuralActive ? Math.round(neural.battery) : systemStatus.battery;
+
   return (
     <div className="flex flex-col h-full">
       {/* Header con accesos directos a paneles */}
@@ -127,32 +156,35 @@ const DashboardPanel = ({
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-sm sm:text-base font-bold text-white">BMW Style</span>
           <Badge className="bg-blue-600 text-xs">Dashboard</Badge>
+          {neuralActive && (
+            <Badge className="bg-emerald-500 text-xs animate-pulse" data-testid="neural-active-badge">Neural ON</Badge>
+          )}
         </div>
         <div className="flex items-center gap-2 sm:gap-4 text-white">
           {/* Velocidad */}
           <div className="flex items-center gap-1 text-cyan-400">
             <Gauge className="w-4 h-4" />
-            <span className="font-bold">85 km/h</span>
+            <span className="font-bold" data-testid="header-speed">{speed} km/h</span>
           </div>
           {/* RPM */}
           <div className="flex items-center gap-1 text-green-400">
             <span className="text-xs">RPM</span>
-            <span className="font-bold">2,850</span>
+            <span className="font-bold" data-testid="header-rpm">{rpm.toLocaleString()}</span>
           </div>
           {/* Torque */}
           <div className="flex items-center gap-1 text-orange-400">
             <span className="text-xs">Torque</span>
-            <span className="font-bold">420 Nm</span>
+            <span className="font-bold" data-testid="header-torque">{torque} Nm</span>
           </div>
           {/* Temperatura */}
           <div className="flex items-center gap-1 text-red-400">
             <Thermometer className="w-4 h-4" />
-            <span className="font-bold">32°C</span>
+            <span className="font-bold" data-testid="header-temp">{temp}°C</span>
           </div>
           {/* Batería */}
           <div className="flex items-center gap-1 text-green-400">
             <Battery className="w-4 h-4" />
-            <span className="font-bold">{systemStatus.battery}%</span>
+            <span className="font-bold" data-testid="header-battery">{battery}%</span>
           </div>
           <Wifi size={14} />
           <Bluetooth size={14} />
@@ -181,8 +213,8 @@ const DashboardPanel = ({
                 <Gauge className="w-5 h-5 text-cyan-400" />
                 <Badge variant="outline" className="text-cyan-400 border-cyan-400">Velocidad</Badge>
               </div>
-              <div className="text-2xl font-bold text-cyan-400 mb-1">85 km/h</div>
-              <Progress value={42} className="h-2" />
+              <div className="text-2xl font-bold text-cyan-400 mb-1" data-testid="card-speed">{speed} km/h</div>
+              <Progress value={Math.min(100, speed / 2)} className="h-2" />
             </CardContent>
           </Card>
           <Card className="bg-slate-900/50 border-slate-700">
@@ -191,8 +223,8 @@ const DashboardPanel = ({
                 <Battery className="w-5 h-5 text-green-400" />
                 <Badge variant="outline" className="text-green-400 border-green-400">Batería</Badge>
               </div>
-              <div className="text-2xl font-bold text-green-400 mb-1">{systemStatus.battery}%</div>
-              <Progress value={systemStatus.battery} className="h-2" />
+              <div className="text-2xl font-bold text-green-400 mb-1" data-testid="card-battery">{battery}%</div>
+              <Progress value={battery} className="h-2" />
             </CardContent>
           </Card>
           <Card className="bg-slate-900/50 border-slate-700">
@@ -201,8 +233,8 @@ const DashboardPanel = ({
                 <Thermometer className="w-5 h-5 text-orange-400" />
                 <Badge variant="outline" className="text-orange-400 border-orange-400">Temperatura</Badge>
               </div>
-              <div className="text-2xl font-bold text-orange-400 mb-1">32°C</div>
-              <Progress value={64} className="h-2" />
+              <div className="text-2xl font-bold text-orange-400 mb-1" data-testid="card-temp">{temp}°C</div>
+              <Progress value={Math.min(100, temp * 2)} className="h-2" />
             </CardContent>
           </Card>
           

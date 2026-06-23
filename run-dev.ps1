@@ -1,19 +1,26 @@
 # ==========================================================
-# run-dev.ps1 — Levanta backend (:8001) y frontend (:3000)
-# Uso (PowerShell):  ./run-dev.ps1
+# run-dev.ps1 — Levanta el FRONTEND (:3000) y, si existe, el
+# BACKEND opcional (:8001).
+#
+#   ./run-dev.ps1              -> frontend + backend (si hay venv)
+#   ./run-dev.ps1 -FrontOnly   -> solo frontend
+#
+# Ctrl+C detiene todo.
 # ==========================================================
+param([switch]$FrontOnly)
+
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-if (-Not (Test-Path "$Root/backend/.venv")) {
-    Write-Host "No se encontro backend/.venv. Ejecuta primero ./setup.ps1" -ForegroundColor Red
-    exit 1
+$backend = $null
+if (-Not $FrontOnly -and (Test-Path "$Root/backend/.venv")) {
+    Write-Host "==> Iniciando BACKEND (opcional) en http://localhost:8001" -ForegroundColor Cyan
+    $backend = Start-Process -PassThru -NoNewWindow -WorkingDirectory "$Root/backend" `
+        -FilePath ".venv/Scripts/python.exe" `
+        -ArgumentList "-m","uvicorn","server:app","--host","0.0.0.0","--port","8001","--reload"
+} else {
+    Write-Host "==> Modo FRONTEND-ONLY (backend no se inicia)." -ForegroundColor Yellow
 }
-
-Write-Host "==> Iniciando BACKEND en http://localhost:8001" -ForegroundColor Cyan
-$backend = Start-Process -PassThru -NoNewWindow -WorkingDirectory "$Root/backend" `
-    -FilePath ".venv/Scripts/python.exe" `
-    -ArgumentList "-m","uvicorn","server:app","--host","0.0.0.0","--port","8001","--reload"
 
 Write-Host "==> Iniciando FRONTEND en http://localhost:3000" -ForegroundColor Cyan
 $useYarn = [bool](Get-Command yarn -ErrorAction SilentlyContinue)
@@ -22,12 +29,14 @@ $frontend = Start-Process -PassThru -NoNewWindow -WorkingDirectory "$Root/fronte
     -FilePath $frontCmd -ArgumentList "start"
 
 Write-Host ""
-Write-Host "Presiona Ctrl+C para detener ambos servicios." -ForegroundColor Yellow
+Write-Host "Presiona Ctrl+C para detener los servicios." -ForegroundColor Yellow
 
 try {
-    Wait-Process -Id $backend.Id, $frontend.Id
+    $ids = @($frontend.Id)
+    if ($backend) { $ids += $backend.Id }
+    Wait-Process -Id $ids
 } finally {
     Write-Host "==> Deteniendo servicios..." -ForegroundColor Cyan
-    if (-Not $backend.HasExited)  { Stop-Process -Id $backend.Id  -Force -ErrorAction SilentlyContinue }
+    if ($backend -and -Not $backend.HasExited) { Stop-Process -Id $backend.Id -Force -ErrorAction SilentlyContinue }
     if (-Not $frontend.HasExited) { Stop-Process -Id $frontend.Id -Force -ErrorAction SilentlyContinue }
 }

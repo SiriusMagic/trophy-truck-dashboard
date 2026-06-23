@@ -1,41 +1,15 @@
 # ==========================================================
 # docker compose up --build
-# Levanta MongoDB + Backend (FastAPI) + Frontend (Nginx)
+# Frontend (Nginx) + Backend opcional (FastAPI healthcheck).
+# Sin MongoDB: la app es frontend-only por ahora.
 # ==========================================================
 
 services:
-  mongo:
-    image: mongo:7
-    restart: unless-stopped
-    ports:
-      - "${MONGO_PORT:-27017}:27017"
-    volumes:
-      - mongo_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  backend:
-    build:
-      context: ./backend
-    restart: unless-stopped
-    environment:
-      MONGO_URL: mongodb://mongo:27017
-      DB_NAME: ${DB_NAME:-trophy_truck}
-      CORS_ORIGINS: ${CORS_ORIGINS:-*}
-    ports:
-      - "${BACKEND_PORT:-8001}:8001"
-    depends_on:
-      mongo:
-        condition: service_healthy
-
   frontend:
     build:
       context: ./frontend
       args:
-        # Vacío => el navegador llama a /api en el mismo origen (Nginx hace proxy al backend)
+        # Vacío => el navegador llama a /api en el mismo origen (Nginx hace proxy al backend).
         REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-}
     restart: unless-stopped
     ports:
@@ -43,5 +17,12 @@ services:
     depends_on:
       - backend
 
-volumes:
-  mongo_data:
+  # Backend opcional (esqueleto): solo expone /api/ y /api/health.
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+    ports:
+      - "${BACKEND_PORT:-8001}:8001"

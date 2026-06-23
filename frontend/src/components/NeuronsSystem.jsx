@@ -5,9 +5,22 @@ import { motion } from "framer-motion";
 export const NeuronsContext = createContext();
 
 export const NeuronsProvider = ({ children }) => {
-  const [neuronsActive, setNeuronsActive] = useState(false);
-  const [neuronsData, setNeuronsData] = useState(null);
-  
+  const [neuronsActive, setNeuronsActive] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("neuronsActive")) ?? false; }
+    catch { return false; }
+  });
+  const [neuronsData, setNeuronsData] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("neuronsData")); }
+    catch { return null; }
+  });
+
+  React.useEffect(() => {
+    try { localStorage.setItem("neuronsActive", JSON.stringify(neuronsActive)); } catch {}
+  }, [neuronsActive]);
+  React.useEffect(() => {
+    try { localStorage.setItem("neuronsData", JSON.stringify(neuronsData)); } catch {}
+  }, [neuronsData]);
+
   return (
     <NeuronsContext.Provider value={{ 
       neuronsActive, 
@@ -21,9 +34,15 @@ export const NeuronsProvider = ({ children }) => {
 };
 
 export default function NeuronsSystem() {
-  // Slider value 0..100 para controlar toda la aplicación
-  const [value, setValue] = useState(50);
-  const [isActive, setIsActive] = useState(false);
+  // Estado compartido en la raíz (persiste aunque se navegue de sección).
+  const { neuronsActive, setNeuronsActive, setNeuronsData } = useContext(NeuronsContext);
+  const isActive = neuronsActive;
+  const setIsActive = setNeuronsActive;
+
+  // Slider value 0..100 para controlar toda la aplicación.
+  // Se persiste en el contexto para no perderse al desmontar el panel.
+  const { neuronsData } = useContext(NeuronsContext);
+  const [value, setValue] = useState(() => neuronsData?.sliderValue ?? 50);
 
   // Network shape - expandido para controlar más elementos
   const shape = { input: 1, hidden: 12, output: 8 };
@@ -82,33 +101,25 @@ export default function NeuronsSystem() {
 
   const ff = forward(normalized, network);
 
-  // Funciones para aplicar control neuronal a la aplicación
+  // Persiste el estado neuronal en el contexto (raíz) para que cualquier
+  // componente lo lea aunque este panel se desmonte al cambiar de sección.
   const applyNeuralControl = () => {
-    if (!isActive) return;
-
-    // Emitir evento personalizado con datos neuronales
-    window.dispatchEvent(new CustomEvent('neuronsUpdate', {
-      detail: {
-        input: normalized,
-        hidden: ff.hidden.map(h => h.a),
-        output: ff.output.map(o => o.a),
-        controls: {
-          speed: ff.output[0]?.a * 100 || 0,
-          temperature: ff.output[1]?.a * 50 || 0,
-          battery: ff.output[2]?.a * 100 || 0,
-          rpm: ff.output[3]?.a * 3000 || 0,
-          torque: ff.output[4]?.a * 500 || 0,
-          brightness: ff.output[5]?.a || 0.5,
-          panelOpacity: ff.output[6]?.a || 0.8,
-          animationSpeed: ff.output[7]?.a * 2 || 1
-        }
-      }
-    }));
+    const controls = {
+      speed: ff.output[0]?.a * 100 || 0,
+      temperature: ff.output[1]?.a * 50 || 0,
+      battery: ff.output[2]?.a * 100 || 0,
+      rpm: ff.output[3]?.a * 3000 || 0,
+      torque: ff.output[4]?.a * 500 || 0,
+      brightness: ff.output[5]?.a || 0.5,
+      panelOpacity: ff.output[6]?.a || 0.8,
+      animationSpeed: ff.output[7]?.a * 2 || 1,
+    };
+    setNeuronsData({ active: isActive, sliderValue: value, controls });
   };
 
   React.useEffect(() => {
     applyNeuralControl();
-  }, [ff, isActive]);
+  }, [ff, isActive, value]);
 
   const convertToNeurons = () => {
     const neurons = [];
@@ -168,6 +179,7 @@ export default function NeuronsSystem() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsActive(!isActive)}
+            data-testid="neural-toggle-btn"
             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
               isActive 
                 ? 'bg-green-600 hover:bg-green-700 text-white' 
@@ -189,6 +201,7 @@ export default function NeuronsSystem() {
           max={100}
           value={value}
           onChange={(e) => setValue(Number(e.target.value))}
+          data-testid="neural-master-slider"
           className="w-full accent-cyan-400"
         />
         <div className="flex items-center gap-4 mt-3">

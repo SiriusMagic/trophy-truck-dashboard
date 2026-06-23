@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Eye, Shield, Move, MapPin, Wind, CircleDot, Target, ArrowUp, Sparkles, Activity,
   AlertTriangle, Leaf, Battery, ArrowLeftRight, Settings, Car, Heart, Mountain, Radar,
-  Gauge, RotateCcw, Smartphone
+  Gauge, RotateCcw, Smartphone, Brain
 } from "lucide-react";
 import ReconnaissanceSystem from "./ReconnaissanceSystem";
 import SecuritySystem from "./SecuritySystem";
@@ -27,6 +27,7 @@ import SuspensionControl from "./SuspensionControl";
 import SituationalAwareness from "./SituationalAwareness";
 import AdvancedDiagnostics from "./AdvancedDiagnostics";
 import VirtualTransmission from "./VirtualTransmission";
+import NeuronsSystem from "./NeuronsSystem";
 import { mockData } from "../data/mockData";
 import DashboardPanel from "./DashboardPanel";
 import MinimalDriverDashboard from "./MinimalDriverDashboard";
@@ -74,7 +75,8 @@ const FuturisticInterface = () => {
     { id: "suspension", name: "Suspensión", icon: Mountain },
     { id: "awareness", name: "Sensores", icon: Radar },
     { id: "diagnostics", name: "Diagnósticos", icon: Activity },
-    { id: "transmission", name: "Transmisión", icon: Gauge }
+    { id: "transmission", name: "Transmisión", icon: Gauge },
+    { id: "neural", name: "Sistema Neural", icon: Brain }
   ], []);
 
   const [activeSection, setActiveSection] = useState(null);
@@ -141,6 +143,7 @@ const FuturisticInterface = () => {
           disabled={!isLandscape}
         />
       );
+      case "neural": return <NeuronsSystem />;
       default: return null;
     }
   };
@@ -168,7 +171,7 @@ const FuturisticInterface = () => {
             {sections.map((s) => {
               const Icon = s.icon; const active = s.id === activeSection;
               return (
-                <button key={s.id} onClick={() => setActiveSection(s.id)} className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${active ? "bg-cyan-600 text-white" : "text-slate-300 hover:bg-slate-800"}`}>
+                <button key={s.id} onClick={() => setActiveSection(s.id)} data-testid={`nav-${s.id}`} className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${active ? "bg-cyan-600 text-white" : "text-slate-300 hover:bg-slate-800"}`}>
                   <Icon className="w-4 h-4" />
                   <span className="truncate">{s.name}</span>
                 </button>
