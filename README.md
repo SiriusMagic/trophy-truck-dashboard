@@ -1,174 +1,72 @@
-# Trophy Truck Eléctrico — Panel de Sistemas Inteligente
+# Trophy Truck Eléctrico — Panel de Sistemas
 
-Interfaz futurista para un trophy truck eléctrico construida con **React (CRA + CRACO)** y **Three.js**. Muestra un dashboard con telemetría (velocidad, RPM, torque, batería, temperatura), un modelo 3D interactivo y múltiples módulos de control del vehículo.
+Panel de control futurista para un **trophy truck eléctrico** (camioneta todoterreno de competición). Muestra telemetría (velocidad, RPM, torque, batería, temperatura) y más de 25 módulos para controlar el vehículo.
 
-> ⚡ **Estado actual: la app es _frontend-only_.** Funciona de forma autónoma con datos simulados (`src/data/mockData.js`) y un modelo 3D generado por código. **No requiere backend ni base de datos.**
->
-> Existe un **backend opcional** (FastAPI) reducido a un esqueleto con endpoints de verificación, pensado para una API futura (ver sección [Backend futuro](#11-backend-futuro)).
+> ✅ **Funciona 100 % en el navegador.** No necesita servidor, base de datos ni Vercel. Los datos son simulados (`frontend/src/data/mockData.js`).
 
----
+## Módulos
 
-## 1. Requisitos previos
+- **Panel principal**: velocidad, RPM, torque, batería y temperaturas.
+- **Potencia, tracción y transmisión virtual**.
+- **Suspensión, neumáticos y compresor**.
+- **Modo cangrejo**: dirección en las cuatro ruedas.
+- **Aerodinámica, conducción autónoma y avanzada**.
+- **Reconocimiento, sensores y conciencia situacional**.
+- **Seguridad, códigos y geocercas**.
+- **Confort e higienización UV**.
+- **Diagnóstico y monitoreo de parámetros**.
+- **Sistema neural**: red neuronal visual con controles.
 
-| Herramienta | Versión recomendada | Necesario para |
-|-------------|---------------------|----------------|
-| **Node.js** | `>= 20.x` (probado en 20.20) | Frontend (incluye `npm` y `yarn`) |
-| **npm**     | `>= 10.x`           | Frontend (alternativa: `yarn 1.22`) |
-| **Python**  | `>= 3.11`           | Backend **opcional** |
-| **Docker**  | `>= 24` (opcional)  | Despliegue reproducible |
+## Cómo usarla
 
-> MongoDB **ya no es necesario**: se eliminó la dependencia.
+### Opción 1 — En el navegador, sin instalar nada
 
-Comprueba versiones: `node --version` · `npm --version` · `python3 --version`
+Ábrela en **https://siriusmagic.github.io/trophy-truck-dashboard/**
 
----
+Se publica sola en GitHub Pages cada vez que hay un cambio en `main`. La primera vez hay que activarlo en **Settings → Pages → Source: GitHub Actions**.
 
-## 2. Instalación paso a paso
+### Opción 2 — En tu computadora
 
-### Opción A — Un solo comando
-
-**Solo frontend (recomendado para la app actual):**
-```bash
-./setup.sh --front-only          # Linux/macOS
-./setup.ps1 -FrontOnly           # Windows PowerShell
-```
-
-**Frontend + backend opcional:**
-```bash
-./setup.sh                       # Linux/macOS
-./setup.ps1                      # Windows PowerShell
-```
-
-Los scripts instalan dependencias (usan **yarn** si está disponible, si no **npm**) y crean los `.env` desde los `.env.example`.
-
-### Opción B — Manual (solo frontend)
-```bash
-cd frontend
-npm install            # o: yarn install
-cp .env.example .env
-```
-
----
-
-## 3. Cómo ejecutar el **frontend** (modo principal)
+Requisitos: **Node.js 20 o superior** y **Yarn**.
 
 ```bash
 cd frontend
-npm run dev        # alias de "npm start" (CRACO)
-# o: npm start
+yarn install
+yarn dev        # abre http://localhost:3000
 ```
-- URL: **http://localhost:3000**
-- Optimizado para **orientación horizontal (landscape)**.
-- No necesita backend.
 
-## 4. Cómo ejecutar el **backend opcional** (healthcheck)
+Para generar la versión final: `yarn build` (queda en `frontend/build/`) y `yarn preview` para probarla.
+
+### Opción 3 — Compartirla desde tu computadora con un túnel
+
+Con la app corriendo (`yarn dev`), en otra terminal:
 
 ```bash
-cd backend
-python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn server:app --host 0.0.0.0 --port 8001
+npx cloudflared tunnel --url http://localhost:3000
 ```
-- Entrada: **`backend/server.py`** (instancia FastAPI `app`).
-- Endpoints: `GET /api/` y `GET /api/health`.
-- Docs: **http://localhost:8001/docs**
 
-## 5. Cómo ejecutar **todo junto / por separado**
+Te dará un enlace `https://….trycloudflare.com` que puedes abrir desde el celular o compartir. Se cierra al detener el comando.
+
+### Opción 4 — Docker
 
 ```bash
-./run-dev.sh                # frontend + backend (si existe el venv)
-./run-dev.sh --front-only   # solo frontend
-
-# Windows
-./run-dev.ps1
-./run-dev.ps1 -FrontOnly
+docker compose up --build   # http://localhost:3000
 ```
 
-Con Docker:
-```bash
-docker compose up --build   # frontend (:3000) + backend opcional (:8001)
-```
+## Tecnología
 
----
+- **React 19** + **Vite 7**
+- **Tailwind CSS** + componentes **shadcn/ui** (Radix UI)
+- **Three.js** para gráficos 3D
 
-## 6. Generar build de producción
+## Familia de proyectos
 
-**Linux/macOS:** `./build.sh` · **Windows:** `./build.ps1`
-
-Genera `frontend/build/`. Servir localmente: `cd frontend && npm run serve`.
-
----
-
-## 7. Puertos usados
-
-| Servicio | Puerto | URL |
-|----------|--------|-----|
-| Frontend | `3000` | http://localhost:3000 |
-| Backend (opcional) | `8001` | http://localhost:8001/api |
-
----
-
-## 8. Variables de entorno
-
-**`frontend/.env`**
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
-| `REACT_APP_BACKEND_URL` | URL base del backend (no usada hoy por el frontend) | `http://localhost:8001` |
-| `WDS_SOCKET_PORT` | Puerto del websocket del dev server | `3000` |
-
-**`backend/.env`** (solo si usas el backend)
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
-| `CORS_ORIGINS` | Orígenes permitidos (coma) | `*` |
-
----
-
-## 9. Errores comunes y solución
-
-| Síntoma | Causa | Solución |
-|---------|-------|----------|
-| Pantalla "Gira tu dispositivo" | La app exige horizontal | Usa una ventana más ancha que alta |
-| `Port 3000 is already in use` | Puerto ocupado | Mata el proceso o cambia `PORT` |
-| Frontend no carga estilos | Dependencias incompletas | Reinstala con `npm install` (o `yarn install`) |
-| `uvicorn: command not found` | venv no activado | Activa `.venv` y `pip install -r backend/requirements.txt` |
-| Conflicto npm/yarn | Existen ambos lockfiles | Usa un solo gestor; el proyecto trae `yarn.lock` |
-
----
-
-## 10. Estructura del proyecto
-
-```
-/
-├── README.md / DEPLOY.md
-├── docker-compose.yml      · frontend + backend opcional (sin Mongo)
-├── .env.example
-├── setup.{sh,ps1} · run-dev.{sh,ps1} · build.{sh,ps1}
-├── backend/                · FastAPI esqueleto (opcional)
-│   ├── server.py           · /api/  y  /api/health
-│   ├── requirements.txt    · fastapi, uvicorn, python-dotenv
-│   ├── Dockerfile
-│   └── .env.example
-└── frontend/               · React (CRA + CRACO) — app principal
-    ├── src/
-    ├── package.json
-    ├── Dockerfile · nginx.conf
-    └── .env.example
-```
-
----
-
-## 11. Backend futuro
-
-El backend actual es un **esqueleto intencional** (solo `/api/` y `/api/health`). Está preparado para crecer cuando el producto lo requiera, sin implementarse todavía:
-
-- **Telemetría real**: WebSockets/SSE para alimentar el dashboard con datos en vivo en lugar de `mockData.js`.
-- **Persistencia**: base de datos (p. ej. MongoDB) para guardar configuraciones del vehículo y perfiles de conducción.
-- **Usuarios y autenticación**: login/registro, sesiones y roles (conductor, técnico, admin).
-- **Historial**: registro de viajes, diagnósticos y métricas.
-
-> Hasta que se decida implementar lo anterior, **no se configura MongoDB, auth ni CORS avanzado**.
-
-Para despliegue, lee **[DEPLOY.md](./DEPLOY.md)**.
+| Repo | Qué es |
+|---|---|
+| trophy-truck-ui-alfa | Versión alfa original |
+| trophy-truck-ui-3d | + modelo 3D y panel estilo BMW |
+| trophy-truck-ui-neuronal | + red neuronal visual |
+| trophy-truck-dashboard | Versión limpia y lista para publicar (este repo) |
 
 ## Licencia
 
