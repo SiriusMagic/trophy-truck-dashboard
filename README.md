@@ -169,3 +169,11 @@ El backend actual es un **esqueleto intencional** (solo `/api/` y `/api/health`)
 > Hasta que se decida implementar lo anterior, **no se configura MongoDB, auth ni CORS avanzado**.
 
 Para despliegue, lee **[DEPLOY.md](./DEPLOY.md)**.
+
+## Licencia
+
+Copyright 2026 SiriusMagic
+
+Este proyecto se distribuye bajo la **Licencia Apache 2.0**. Consulta el archivo [`LICENSE`](./LICENSE) para ver el texto completo.
+
+En resumen: cualquiera puede usar, copiar, modificar y distribuir este código, siempre que conserve el aviso de copyright y la licencia. El software se entrega **"tal cual", sin garantías de ningún tipo**, y los autores no se hacen responsables de daños derivados de su uso.
