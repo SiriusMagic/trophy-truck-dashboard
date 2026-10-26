@@ -1,28 +1,8 @@
-# ==========================================================
-# docker compose up --build
-# Frontend (Nginx) + Backend opcional (FastAPI healthcheck).
-# Sin MongoDB: la app es frontend-only por ahora.
-# ==========================================================
-
+# docker compose up --build   ->  http://localhost:3000
+# La app es 100 % frontend: no hay backend ni base de datos.
 services:
   frontend:
-    build:
-      context: ./frontend
-      args:
-        # Vacío => el navegador llama a /api en el mismo origen (Nginx hace proxy al backend).
-        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-}
+    build: ./frontend
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-3000}:80"
-    depends_on:
-      - backend
-
-  # Backend opcional (esqueleto): solo expone /api/ y /api/health.
-  backend:
-    build:
-      context: ./backend
-    restart: unless-stopped
-    environment:
-      CORS_ORIGINS: ${CORS_ORIGINS:-*}
-    ports:
-      - "${BACKEND_PORT:-8001}:8001"

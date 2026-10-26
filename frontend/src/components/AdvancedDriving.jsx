@@ -7,7 +7,6 @@ import { Progress } from './ui/progress';
 import { Switch } from './ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { 
-  Steering,
   Zap,
   Sun,
   Battery,
