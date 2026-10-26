@@ -33,12 +33,13 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && !github.event.repository.private
         with:
           path: frontend/build
 
   deploy:
-    if: github.event_name != 'pull_request'
+    # GitHub Pages gratis solo funciona en repos públicos.
+    if: github.event_name != 'pull_request' && !github.event.repository.private
     needs: build
     runs-on: ubuntu-latest
     environment:
