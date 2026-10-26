@@ -63,10 +63,10 @@ docker compose up --build   # http://localhost:3000
 
 | Repo | Qué es |
 |---|---|
-| trophy-truck-ui-alfa | Versión alfa original |
-| trophy-truck-ui-3d | + modelo 3D y panel estilo BMW |
-| trophy-truck-ui-neuronal | + red neuronal visual |
-| trophy-truck-dashboard | Versión limpia y lista para publicar (este repo) |
+| trophy-truck-ui-alfa | Versión alfa original (archivada) |
+| trophy-truck-ui-3d | + modelo 3D y panel estilo BMW (archivada) |
+| trophy-truck-ui-neuronal | + red neuronal visual (archivada) |
+| **trophy-truck-dashboard** | **Versión unificada: incluye todo lo anterior (este repo)** |
 
 ## Licencia
 
