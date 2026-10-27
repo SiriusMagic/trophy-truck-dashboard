@@ -53,6 +53,15 @@ Te dará un enlace `https://….trycloudflare.com` que puedes abrir desde el cel
 docker compose up --build   # http://localhost:3000
 ```
 
+## Pruebas
+
+```bash
+cd frontend
+yarn test:e2e   # abre los 24 módulos del menú y el tablero 3D en Chromium, sin errores
+```
+
+GitHub las ejecuta en cada cambio. Las actualizaciones menores de Dependabot se fusionan solas cuando las pruebas pasan.
+
 ## Tecnología
 
 - **React 19** + **Vite 8**
