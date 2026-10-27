@@ -1,26 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
-import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Switch } from './ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { 
-  Zap,
-  Sun,
-  Battery,
-  Car,
-  Brain,
-  Eye,
-  Hand,
-  Gauge,
-  RotateCcw,
-  Target,
-  Settings,
-  Activity,
-  ArrowLeftRight
-} from 'lucide-react';
+import { Sun, Car, Brain, Eye, Hand } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
 const AdvancedDriving = ({ vehicleData, disabled }) => {

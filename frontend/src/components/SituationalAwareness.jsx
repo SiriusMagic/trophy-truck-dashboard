@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Switch } from './ui/switch';
-import { 
-  Eye, 
-  Radar, 
-  Thermometer,
-  AlertTriangle,
-  Target,
-  Compass,
-  Activity,
-  Mountain
-} from 'lucide-react';
+import { Radar, Target, Activity, Mountain } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
 const SituationalAwareness = ({ vehicleData, disabled }) => {

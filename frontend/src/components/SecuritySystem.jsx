@@ -1,25 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Switch } from './ui/switch';
-import { 
-  Shield,
-  DoorOpen,
-  DoorClosed,
-  UserCheck,
-  UserX,
-  AlertTriangle,
-  CheckCircle,
-  Car,
-  Users,
-  Lock,
-  Unlock,
-  ArrowUp
-} from 'lucide-react';
+import { Shield, DoorOpen, DoorClosed, UserCheck, UserX, Users, Lock } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
-const SecuritySystem = ({ vehicleData, disabled, onSecurityStatusChange }) => {
+const SecuritySystem = ({ disabled, onSecurityStatusChange }) => {
   const [doorsStatus, setDoorsStatus] = useState({
     frontLeft: false,    // false = cerrada, true = abierta
     frontRight: false,

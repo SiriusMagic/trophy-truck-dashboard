@@ -1,27 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { 
-  Activity, 
-  Thermometer, 
+import {
   Battery,
-  Zap,
   AlertTriangle,
   CheckCircle,
   TrendingUp,
   Clock,
   Cpu,
-  HardDrive
+  HardDrive,
 } from 'lucide-react';
-import { useToast } from '../hooks/use-toast';
 
 const AdvancedDiagnostics = ({ vehicleData, motorControls, disabled }) => {
   const [diagnosticHistory, setDiagnosticHistory] = useState([]);
   const [activeAlerts, setActiveAlerts] = useState([]);
-  const { toast } = useToast();
 
   // Fallback seguro para evitar errores cuando no se recibe motorControls
   const defaultControls = { rear: { voltage: 400, amperage: 150 }, front: { voltage: 380, amperage: 120 } };

@@ -1,39 +1,60 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import {
-  Eye, Shield, Move, MapPin, Wind, CircleDot, Target, ArrowUp, Sparkles, Activity,
-  AlertTriangle, Leaf, Battery, ArrowLeftRight, Settings, Car, Heart, Mountain, Radar,
-  Gauge, RotateCcw, Smartphone, Brain
+  Eye,
+  Shield,
+  Move,
+  MapPin,
+  Wind,
+  CircleDot,
+  Target,
+  ArrowUp,
+  Sparkles,
+  Activity,
+  AlertTriangle,
+  Leaf,
+  Battery,
+  ArrowLeftRight,
+  Settings,
+  Car,
+  Mountain,
+  Radar,
+  Gauge,
+  RotateCcw,
+  Smartphone,
+  Brain,
 } from "lucide-react";
-import ReconnaissanceSystem from "./ReconnaissanceSystem";
-import SecuritySystem from "./SecuritySystem";
-import CrabModeSystem from "./CrabModeSystem";
-import VidenSystem from "./VidenSystem";
-import GeocercasSystem from "./GeocercasSystem";
-import AerodinamicaSystem from "./AerodinamicaSystem";
-import TireSystem from "./TireSystem";
-import EnhancedTireSystem from "./EnhancedTireSystem";
-import CompressorSystem from "./CompressorSystem";
-import UVHygienizationSystem from "./UVHygienizationSystem";
-import ParameterMonitoringSystem from "./ParameterMonitoringSystem";
-import CodesSystem from "./CodesSystem";
-import TreeRSystem from "./TreeRSystem";
-import AutonomyControl from "./AutonomyControl";
-import TractionControl from "./TractionControl";
-import SmartVehicleControl from "./SmartVehicleControl";
-import ComfortSystems from "./ComfortSystems";
-import AdvancedDriving from "./AdvancedDriving";
-import PowerControlSystem from "./PowerControlSystem";
-import SuspensionControl from "./SuspensionControl";
-import SituationalAwareness from "./SituationalAwareness";
-import AdvancedDiagnostics from "./AdvancedDiagnostics";
-import VirtualTransmission from "./VirtualTransmission";
 import NeuronsSystem from "./NeuronsSystem";
 import { mockData } from "../data/mockData";
-import DashboardPanel from "./DashboardPanel";
 import MinimalDriverDashboard from "./MinimalDriverDashboard";
 import QuickSettingsPanel from "./QuickSettingsPanel";
 import NotificationsPanel from "./NotificationsPanel";
 import VehicleControlPanel from "./VehicleControlPanel";
+
+// Cada módulo se descarga solo cuando se abre (carga inicial más rápida).
+const ReconnaissanceSystem = lazy(() => import("./ReconnaissanceSystem"));
+const SecuritySystem = lazy(() => import("./SecuritySystem"));
+const CrabModeSystem = lazy(() => import("./CrabModeSystem"));
+const VidenSystem = lazy(() => import("./VidenSystem"));
+const GeocercasSystem = lazy(() => import("./GeocercasSystem"));
+const AerodinamicaSystem = lazy(() => import("./AerodinamicaSystem"));
+const TireSystem = lazy(() => import("./TireSystem"));
+const EnhancedTireSystem = lazy(() => import("./EnhancedTireSystem"));
+const CompressorSystem = lazy(() => import("./CompressorSystem"));
+const UVHygienizationSystem = lazy(() => import("./UVHygienizationSystem"));
+const ParameterMonitoringSystem = lazy(() => import("./ParameterMonitoringSystem"));
+const CodesSystem = lazy(() => import("./CodesSystem"));
+const TreeRSystem = lazy(() => import("./TreeRSystem"));
+const AutonomyControl = lazy(() => import("./AutonomyControl"));
+const TractionControl = lazy(() => import("./TractionControl"));
+const SmartVehicleControl = lazy(() => import("./SmartVehicleControl"));
+const ComfortSystems = lazy(() => import("./ComfortSystems"));
+const AdvancedDriving = lazy(() => import("./AdvancedDriving"));
+const PowerControlSystem = lazy(() => import("./PowerControlSystem"));
+const SuspensionControl = lazy(() => import("./SuspensionControl"));
+const SituationalAwareness = lazy(() => import("./SituationalAwareness"));
+const AdvancedDiagnostics = lazy(() => import("./AdvancedDiagnostics"));
+const VirtualTransmission = lazy(() => import("./VirtualTransmission"));
+const DashboardPanel = lazy(() => import("./DashboardPanel"));
 
 const FuturisticInterface = () => {
   const [isLandscape, setIsLandscape] = useState(() => window.innerWidth > window.innerHeight);
@@ -80,7 +101,6 @@ const FuturisticInterface = () => {
   ], []);
 
   const [activeSection, setActiveSection] = useState(null);
-  const leftOpen = true;
 
   const [showMinimal, setShowMinimal] = useState(false);
   const [panelOpen, setPanelOpen] = useState(null); // 'notifications' | 'quick' | null
@@ -180,7 +200,7 @@ const FuturisticInterface = () => {
           </nav>
           <div className="px-3 py-2 text-xs text-slate-500 border-t border-slate-800">Horizontal obligatorio</div>
         </aside>
-        <main className="flex-1 min-w-0 h-full overflow-y-auto"><div className="h-full p-3 sm:p-4">{renderActive()}</div></main>
+        <main className="flex-1 min-w-0 h-full overflow-y-auto"><div className="h-full p-3 sm:p-4"><Suspense fallback={<div className="h-full flex items-center justify-center text-slate-400">Cargando módulo…</div>}>{renderActive()}</Suspense></div></main>
       </div>
 
       <NotificationsPanel open={panelOpen === 'notifications'} onClose={() => setPanelOpen(null)} />

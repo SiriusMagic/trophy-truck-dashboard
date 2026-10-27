@@ -1,25 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Switch } from './ui/switch';
-import { 
-  Fan, 
-  Wind, 
-  Disc, 
-  Thermometer, 
-  Gauge, 
-  Power, 
+import {
+  Fan,
+  Wind,
+  Disc,
+  Thermometer,
+  Gauge,
   AlertTriangle,
   Play,
   Pause,
   Settings,
-  Activity,
-  TrendingUp,
   Eye,
-  Zap
+  Zap,
 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
@@ -99,7 +96,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
       const baseRPM = (compressorSpeed[0] / 100) * 3500;
       const loadFactor = compressorMode === 'both' ? 1.3 : compressorMode === 'brake_cooling' ? 1.1 : 1.0;
       
-      setSystemStatus(prev => ({
+      setSystemStatus(() => ({
         motorRPM: Math.round(baseRPM * loadFactor),
         powerConsumption: Math.round((compressorSpeed[0] / 100) * 45 * loadFactor * 10) / 10,
         efficiency: Math.round((100 - (compressorSpeed[0] * 0.2) + Math.random() * 5) * 10) / 10,

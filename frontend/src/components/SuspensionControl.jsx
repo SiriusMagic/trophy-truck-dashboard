@@ -1,17 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Switch } from './ui/switch';
-import { 
-  Mountain, 
-  ArrowUp, 
-  ArrowDown, 
-  Settings,
-  Target
-} from 'lucide-react';
+import { ArrowUp, ArrowDown } from 'lucide-react';
 import { suspensionModes } from '../data/mockData';
 import { useToast } from '../hooks/use-toast';
 

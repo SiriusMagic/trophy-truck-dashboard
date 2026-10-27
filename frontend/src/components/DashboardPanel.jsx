@@ -1,13 +1,19 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
 import { Progress } from "./ui/progress";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
-import { Wifi, Bluetooth, Battery, Gauge, Thermometer, Bell, Settings as SettingsIcon, SlidersHorizontal, Car } from "lucide-react";
+import {
+  Wifi,
+  Bluetooth,
+  Battery,
+  Gauge,
+  Thermometer,
+  Bell,
+  SlidersHorizontal,
+  Car,
+} from "lucide-react";
 import { useNeuralControls } from "../hooks/useNeuralControls";
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 // Accept optional callbacks to open overlay panels from parent
@@ -18,7 +24,6 @@ const DashboardPanel = ({
   onOpenMinimalDashboard
 }) => {
   const [systemStatus] = useState({ battery: 78, range: 456, connectivity: true, health: 97, cycles: 1247 });
-  const [showBattery, setShowBattery] = useState(false);
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const neuralRef = useRef({ active: false, animationSpeed: 1, brightness: 0.5 });
@@ -133,14 +138,6 @@ const DashboardPanel = ({
       renderer.dispose();
     };
   }, []);
-
-  const bottomOptions = [
-    "Navegación", "Asiento", "Luces", "Ventanas", "Carga",
-    "ISOFIX", "Seguridad", "Conexión", "Notificaciones",
-    "Voz", "Pantalla", "Personalización"
-  ];
-
-  const autonomyKm = Math.round(systemStatus.battery * 7.5);
 
   // Valores mostrados: neuronales si la red está activa, si no los de demo.
   const speed = neuralActive ? Math.round(neural.speed) : 85;

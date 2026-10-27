@@ -20,6 +20,9 @@ test("cada módulo del menú se abre sin errores", async ({ page }) => {
   for (const nombre of MODULOS) {
     await menu.getByText(nombre, { exact: true }).click();
     await expect(page.getByText(nombre).first()).toBeVisible();
+    // El módulo se descarga al abrirlo: espera a que termine de cargar y dibuje algo.
+    await expect(page.getByText("Cargando módulo…")).toHaveCount(0);
+    await expect(page.locator("main")).not.toBeEmpty();
   }
   expect(page.errores).toEqual([]);
 });
