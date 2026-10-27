@@ -65,7 +65,7 @@ const SuspensionControl = ({ disabled }) => {
     <div className="space-y-6">
       
       {/* Suspension Mode Selection */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-orange-400">
@@ -88,7 +88,7 @@ const SuspensionControl = ({ disabled }) => {
             {suspensionModes.map((mode) => (
               <Button
                 key={mode.name}
-                variant={activeMode === mode.name ? "default" : "outline"}
+                variant={activeMode === mode.name ? "default" : "outline-solid"}
                 onClick={() => handleModeChange(mode.name)}
                 disabled={disabled}
                 className={`h-20 flex flex-col ${
@@ -106,7 +106,7 @@ const SuspensionControl = ({ disabled }) => {
       </Card>
 
       {/* Height Control */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-blue-400">
@@ -162,7 +162,7 @@ const SuspensionControl = ({ disabled }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Front Suspension */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-green-400">
@@ -199,7 +199,7 @@ const SuspensionControl = ({ disabled }) => {
         </Card>
 
         {/* Rear Suspension */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-red-400">
@@ -237,7 +237,7 @@ const SuspensionControl = ({ disabled }) => {
       </div>
 
       {/* Real-time Feedback */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-purple-400 mb-4">
             Estado en Tiempo Real

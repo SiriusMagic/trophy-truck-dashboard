@@ -69,7 +69,7 @@ const VirtualTransmission = ({ currentGear, setCurrentGear, motorControls, setMo
   return (
     <div className="space-y-6">
       {/* Gear Selection */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-purple-400">
@@ -81,7 +81,7 @@ const VirtualTransmission = ({ currentGear, setCurrentGear, motorControls, setMo
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <Button
-              variant={currentGear === -1 ? "destructive" : "outline"}
+              variant={currentGear === -1 ? "destructive" : "outline-solid"}
               onClick={() => handleGearChange(-1)}
               disabled={disabled}
               className="h-16 text-lg font-bold"
@@ -92,7 +92,7 @@ const VirtualTransmission = ({ currentGear, setCurrentGear, motorControls, setMo
             {[1, 2, 3].map((gear) => (
               <Button
                 key={gear}
-                variant={currentGear === gear ? "default" : "outline"}
+                variant={currentGear === gear ? "default" : "outline-solid"}
                 onClick={() => handleGearChange(gear)}
                 disabled={disabled}
                 className={`h-16 text-lg font-bold ${
@@ -115,7 +115,7 @@ const VirtualTransmission = ({ currentGear, setCurrentGear, motorControls, setMo
       {/* Motor Control within Gear Limits */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Rear Motor */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-red-400">
@@ -191,7 +191,7 @@ const VirtualTransmission = ({ currentGear, setCurrentGear, motorControls, setMo
         </Card>
 
         {/* Front Motor */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-blue-400">
@@ -262,7 +262,7 @@ const VirtualTransmission = ({ currentGear, setCurrentGear, motorControls, setMo
       </div>
 
       {/* Gear Performance Stats */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-green-400 mb-4">
             Rendimiento Combinado - Marcha {currentGear > 0 ? currentGear : 'R'}

@@ -144,17 +144,17 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* System Status Overview */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-purple-400">
               Sistema de Control Inteligente del Vehículo
             </h3>
             <div className="flex items-center space-x-4">
-              <Badge variant={proximityDetection ? "default" : "outline"}>
+              <Badge variant={proximityDetection ? "default" : "outline-solid"}>
                 {proximityDetection ? "👤 USUARIO DETECTADO" : "📡 ESCANEANDO"}
               </Badge>
-              <Badge variant={voiceActive ? "destructive" : "outline"}>
+              <Badge variant={voiceActive ? "destructive" : "outline-solid"}>
                 {voiceActive ? "🎤 ESCUCHANDO" : "🔇 VOZ OFF"}
               </Badge>
             </div>
@@ -223,7 +223,7 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
 
         <TabsContent value="doors" className="space-y-6">
           {/* Door Control System */}
-          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
             <CardContent className="p-6">
               <h4 className="text-lg font-semibold text-purple-400 mb-6">
                 Sistema de Puertas y Acceso Inteligente
@@ -238,7 +238,7 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
                     {Object.entries(doorsStatus).map(([door, isOpen]) => (
                       <Button
                         key={door}
-                        variant={isOpen ? "destructive" : "outline"}
+                        variant={isOpen ? "destructive" : "outline-solid"}
                         onClick={() => handleDoorToggle(door)}
                         disabled={disabled}
                         className="h-16 flex flex-col"
@@ -270,7 +270,7 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
                     ].map((mode) => (
                       <Button
                         key={mode.id}
-                        variant={lockMode === mode.id ? "default" : "outline"}
+                        variant={lockMode === mode.id ? "default" : "outline-solid"}
                         onClick={() => handleLockModeChange(mode.id)}
                         disabled={disabled}
                         className={`w-full justify-start h-12 ${
@@ -323,7 +323,7 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
 
         <TabsContent value="aerodynamics" className="space-y-6">
           {/* Aerodynamics Control */}
-          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
             <CardContent className="p-6">
               <h4 className="text-lg font-semibold text-cyan-400 mb-6">
                 Sistema Aerodinámico Inteligente
@@ -419,7 +419,7 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
 
         <TabsContent value="displays" className="space-y-6">
           {/* Display Management */}
-          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
             <CardContent className="p-6">
               <h4 className="text-lg font-semibold text-green-400 mb-6">
                 Gestión de Pantallas y Cámaras
@@ -439,7 +439,7 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
                     ].map((mode) => (
                       <Button
                         key={mode.id}
-                        variant={screenMode === mode.id ? "default" : "outline"}
+                        variant={screenMode === mode.id ? "default" : "outline-solid"}
                         onClick={() => setScreenMode(mode.id)}
                         disabled={disabled}
                         className={`w-full justify-start ${
@@ -486,7 +486,7 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
 
         <TabsContent value="profiles" className="space-y-6">
           {/* User Profiles */}
-          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
             <CardContent className="p-6">
               <h4 className="text-lg font-semibold text-blue-400 mb-6">
                 Perfiles de Usuario y Ajustes Automáticos
@@ -501,7 +501,7 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
                     {userProfiles.map((profile) => (
                       <Button
                         key={profile.name}
-                        variant={userProfile === profile.name ? "default" : "outline"}
+                        variant={userProfile === profile.name ? "default" : "outline-solid"}
                         onClick={() => setUserProfile(profile.name)}
                         disabled={disabled}
                         className={`w-full justify-start ${
@@ -563,7 +563,7 @@ const SmartVehicleControl = ({ vehicleData, disabled }) => {
 
         <TabsContent value="voice" className="space-y-6">
           {/* Voice Control */}
-          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
             <CardContent className="p-6">
               <h4 className="text-lg font-semibold text-orange-400 mb-6">
                 Control por Voz e Inteligencia Artificial

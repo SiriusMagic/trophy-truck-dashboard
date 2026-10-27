@@ -63,7 +63,7 @@ const AutonomyControl = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Main Autonomy Display */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="text-center">
             <div className="text-5xl font-bold text-cyan-400 mb-2">
@@ -90,7 +90,7 @@ const AutonomyControl = ({ vehicleData, disabled }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Current Status */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-lg font-semibold text-green-400">Estado Actual</h4>
@@ -119,7 +119,7 @@ const AutonomyControl = ({ vehicleData, disabled }) => {
         </Card>
 
         {/* Efficiency */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-lg font-semibold text-yellow-400">Eficiencia</h4>
@@ -155,7 +155,7 @@ const AutonomyControl = ({ vehicleData, disabled }) => {
         </Card>
 
         {/* Projected Range */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-lg font-semibold text-purple-400">Proyección</h4>
@@ -186,7 +186,7 @@ const AutonomyControl = ({ vehicleData, disabled }) => {
       </div>
 
       {/* Range History */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-blue-400 mb-6">
             Historial de Autonomía
@@ -221,7 +221,7 @@ const AutonomyControl = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Range Optimization Tips */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-green-400 mb-6">
             Optimización de Autonomía
@@ -288,7 +288,7 @@ const AutonomyControl = ({ vehicleData, disabled }) => {
 
       {/* Low Range Alert */}
       {autonomyData.currentRange < 200 && (
-        <Card className="bg-red-900/20 border-red-500/30 backdrop-blur-sm">
+        <Card className="bg-red-900/20 border-red-500/30 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               <AlertTriangle className="w-8 h-8 text-red-400" />

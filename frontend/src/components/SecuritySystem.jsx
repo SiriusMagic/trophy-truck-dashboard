@@ -159,7 +159,7 @@ const SecuritySystem = ({ vehicleData, disabled, onSecurityStatusChange }) => {
     <div className="space-y-6">
       
       {/* Header del Sistema de Seguridad */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -169,7 +169,7 @@ const SecuritySystem = ({ vehicleData, disabled, onSecurityStatusChange }) => {
               </h3>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant={securityLevel === 'high' ? "default" : securityLevel === 'medium' ? "outline" : "destructive"}>
+              <Badge variant={securityLevel === 'high' ? "default" : securityLevel === 'medium' ? "outline-solid" : "destructive"}>
                 {securityLevel === 'high' ? '🛡️ SEGURO' : securityLevel === 'medium' ? '⚠️ PRECAUCIÓN' : '🚨 ALERTA'}
               </Badge>
               <Badge variant="outline">
@@ -200,7 +200,7 @@ const SecuritySystem = ({ vehicleData, disabled, onSecurityStatusChange }) => {
       </Card>
 
       {/* Estado de Puertas */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h4 className="text-lg font-semibold text-purple-400 flex items-center">
@@ -256,7 +256,7 @@ const SecuritySystem = ({ vehicleData, disabled, onSecurityStatusChange }) => {
       </Card>
 
       {/* Estado de Cinturones */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-green-400 mb-6 flex items-center">
             <Users className="w-5 h-5 mr-2" />
@@ -302,7 +302,7 @@ const SecuritySystem = ({ vehicleData, disabled, onSecurityStatusChange }) => {
 
       {/* Resumen de Seguridad */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className={`text-2xl font-bold ${getOpenDoorsCount() > 0 ? 'text-red-400' : 'text-blue-400'}`}>
               {5 - getOpenDoorsCount()}/5
@@ -316,7 +316,7 @@ const SecuritySystem = ({ vehicleData, disabled, onSecurityStatusChange }) => {
           </CardContent>
         </Card>
         
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className={`text-2xl font-bold ${getUnbuckledBeltsCount() > 0 ? 'text-red-400' : 'text-green-400'}`}>
               {4 - getUnbuckledBeltsCount()}/4
@@ -330,7 +330,7 @@ const SecuritySystem = ({ vehicleData, disabled, onSecurityStatusChange }) => {
           </CardContent>
         </Card>
         
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className={`text-2xl font-bold ${
               securityLevel === 'high' ? 'text-green-400' : 

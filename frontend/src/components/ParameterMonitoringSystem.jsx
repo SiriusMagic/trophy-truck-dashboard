@@ -114,7 +114,7 @@ const ParameterMonitoringSystem = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Header del Sistema de Monitoreo */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -161,7 +161,7 @@ const ParameterMonitoringSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Monitoreo de Flujo de Aire */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-blue-400 mb-6 flex items-center">
             <Wind className="w-5 h-5 mr-2" />
@@ -234,7 +234,7 @@ const ParameterMonitoringSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Monitoreo del Compresor */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-purple-400 mb-6 flex items-center">
             <Gauge className="w-5 h-5 mr-2" />
@@ -311,7 +311,7 @@ const ParameterMonitoringSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Monitoreo de Temperatura de Frenos */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-red-400 mb-6 flex items-center">
             <Disc className="w-5 h-5 mr-2" />

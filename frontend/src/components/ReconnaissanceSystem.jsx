@@ -262,7 +262,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Reconnaissance Control Header */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -272,10 +272,10 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
               </h3>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant={roofHatch ? "default" : "outline"}>
+              <Badge variant={roofHatch ? "default" : "outline-solid"}>
                 {roofHatch ? "🚁 COMPUERTA ABIERTA" : "🔒 COMPUERTA CERRADA"}
               </Badge>
-              <Badge variant={getDeployedCount() > 0 ? "destructive" : "outline"}>
+              <Badge variant={getDeployedCount() > 0 ? "destructive" : "outline-solid"}>
                 {getDeployedCount()}/2 DRONES ACTIVOS
               </Badge>
             </div>
@@ -300,7 +300,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Deployment Controls */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <h4 className="text-lg font-semibold text-purple-400 mb-6">
               Control de Despliegue
@@ -309,7 +309,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <Button
-                  variant={dronesStatus.drone1.deployed ? "destructive" : "outline"}
+                  variant={dronesStatus.drone1.deployed ? "destructive" : "outline-solid"}
                   onClick={() => handleDroneDeployment('drone1')}
                   disabled={disabled || !roofHatch}
                   className="h-16 flex flex-col"
@@ -322,7 +322,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
                 </Button>
                 
                 <Button
-                  variant={dronesStatus.drone2.deployed ? "destructive" : "outline"}
+                  variant={dronesStatus.drone2.deployed ? "destructive" : "outline-solid"}
                   onClick={() => handleDroneDeployment('drone2')}
                   disabled={disabled || !roofHatch}
                   className="h-16 flex flex-col"
@@ -335,7 +335,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
                 </Button>
                 
                 <Button
-                  variant={getDeployedCount() === 2 ? "destructive" : "outline"}
+                  variant={getDeployedCount() === 2 ? "destructive" : "outline-solid"}
                   onClick={() => handleDroneDeployment('all')}
                   disabled={disabled || !roofHatch}
                   className="h-16 flex flex-col"
@@ -350,7 +350,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
         </Card>
 
         {/* Mission Type Selection */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <h4 className="text-lg font-semibold text-green-400 mb-6">
               Configuración de Misión
@@ -367,7 +367,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
                 ].map((target) => (
                   <Button
                     key={target.id}
-                    variant={targetDrone === target.id ? "default" : "outline"}
+                    variant={targetDrone === target.id ? "default" : "outline-solid"}
                     onClick={() => setTargetDrone(target.id)}
                     disabled={disabled}
                     className={`h-16 flex flex-col ${
@@ -392,7 +392,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
               ].map((mission) => (
                 <Button
                   key={mission.id}
-                  variant={missionType === mission.id ? "default" : "outline"}
+                  variant={missionType === mission.id ? "default" : "outline-solid"}
                   onClick={() => setMissionType(mission.id)}
                   disabled={disabled}
                   className={`w-full justify-start h-12 ${
@@ -414,7 +414,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
                 variant="default"
                 onClick={() => handleMissionDeployment()}
                 disabled={disabled || !roofHatch}
-                className="w-full h-12 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                className="w-full h-12 bg-linear-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
               >
                 <Target className="w-5 h-5 mr-2" />
                 Enviar Misión: {missionType.charAt(0).toUpperCase() + missionType.slice(1)} 
@@ -427,7 +427,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
 
       {/* Pantalla de Control del Dron */}
       {getDeployedCount() > 0 && (
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
@@ -449,9 +449,9 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
                 
                 <div className="relative bg-slate-800/50 rounded-lg h-48 overflow-hidden border border-slate-600">
                   {/* Simulación de video con grid de puntos móviles */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900">
+                  <div className="absolute inset-0 bg-linear-to-br from-slate-800 via-slate-700 to-slate-900">
                     {/* Simulación de terreno */}
-                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-green-900/30 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-green-900/30 to-transparent"></div>
                     
                     {/* Puntos móviles simulando detecciones */}
                     {[...Array(8)].map((_, i) => (
@@ -583,7 +583,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
 
       {/* Mapeo LIDAR */}
       {getDeployedCount() > 0 && (
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
@@ -642,7 +642,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
                   
                   {/* Líneas de barrido */}
                   <div className="absolute inset-0">
-                    <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse" 
+                    <div className="absolute w-full h-0.5 bg-linear-to-r from-transparent via-cyan-400 to-transparent animate-pulse" 
                          style={{ top: `${(Date.now() / 50) % 100}%` }}></div>
                   </div>
                   
@@ -717,7 +717,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
       )}
 
       {/* Detection Alerts */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-orange-400 mb-6">
             Alertas de Detección
@@ -794,7 +794,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Drone Map */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-blue-400 mb-6">
             Mapa de Reconocimiento LIDAR
@@ -904,7 +904,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Energy Transfer */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-yellow-400 mb-6">
             Transferencia de Energía Dron → Vehículo

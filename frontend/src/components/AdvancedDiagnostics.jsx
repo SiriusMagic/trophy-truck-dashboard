@@ -102,7 +102,7 @@ const AdvancedDiagnostics = ({ vehicleData, motorControls, disabled }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Motor Health */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-blue-400">Salud de Motores</h3>
@@ -142,7 +142,7 @@ const AdvancedDiagnostics = ({ vehicleData, motorControls, disabled }) => {
         </Card>
 
         {/* Battery Pack Health */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-green-400">Paquete de Baterías</h3>
@@ -186,11 +186,11 @@ const AdvancedDiagnostics = ({ vehicleData, motorControls, disabled }) => {
         </Card>
 
         {/* System Alerts */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-yellow-400">Alertas del Sistema</h3>
-              <Badge variant={activeAlerts.length > 0 ? "destructive" : "outline"}>
+              <Badge variant={activeAlerts.length > 0 ? "destructive" : "outline-solid"}>
                 {activeAlerts.length} Activas
               </Badge>
             </div>
@@ -236,7 +236,7 @@ const AdvancedDiagnostics = ({ vehicleData, motorControls, disabled }) => {
 
         <TabsContent value="performance" className="space-y-6">
           {/* Real-time Performance Metrics */}
-          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold text-cyan-400 mb-4">
                 Métricas de Rendimiento en Tiempo Real
@@ -293,7 +293,7 @@ const AdvancedDiagnostics = ({ vehicleData, motorControls, disabled }) => {
 
         <TabsContent value="history" className="space-y-6">
           {/* Performance History */}
-          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold text-green-400 mb-4">
                 Historial de Esfuerzo del Vehículo
@@ -335,7 +335,7 @@ const AdvancedDiagnostics = ({ vehicleData, motorControls, disabled }) => {
 
         <TabsContent value="maintenance" className="space-y-6">
           {/* Maintenance Schedule */}
-          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+          <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold text-orange-400 mb-4">
                 Programa de Mantenimiento

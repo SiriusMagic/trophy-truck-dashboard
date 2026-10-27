@@ -150,7 +150,7 @@ const UVHygienizationSystem = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Header del Sistema UV */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -160,10 +160,10 @@ const UVHygienizationSystem = ({ vehicleData, disabled }) => {
               </h3>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant={uvSystemActive ? "destructive" : "outline"}>
+              <Badge variant={uvSystemActive ? "destructive" : "outline-solid"}>
                 {uvSystemActive ? "🦠 HIGIENIZANDO" : "INACTIVO"}
               </Badge>
-              <Badge variant={autoActivationEnabled ? "default" : "outline"}>
+              <Badge variant={autoActivationEnabled ? "default" : "outline-solid"}>
                 {autoActivationEnabled ? "AUTO" : "MANUAL"}
               </Badge>
             </div>
@@ -194,7 +194,7 @@ const UVHygienizationSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Controles del Sistema */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-blue-400 mb-6">Controles de Higienización</h4>
           
@@ -283,7 +283,7 @@ const UVHygienizationSystem = ({ vehicleData, disabled }) => {
 
       {/* Progreso del Ciclo UV */}
       {(uvSystemActive || uvCycleProgress > 0) && (
-        <Card className="bg-slate-900/50 border-purple-500/50 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-purple-500/50 backdrop-blur-xs">
           <CardContent className="p-6">
             <h4 className="text-lg font-semibold text-purple-400 mb-6 flex items-center">
               <Zap className="w-5 h-5 mr-2" />
@@ -343,7 +343,7 @@ const UVHygienizationSystem = ({ vehicleData, disabled }) => {
 
       {/* Estado de Higiene */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Shield className="w-6 h-6 text-green-400" />
@@ -356,7 +356,7 @@ const UVHygienizationSystem = ({ vehicleData, disabled }) => {
           </CardContent>
         </Card>
         
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Clock className="w-6 h-6 text-blue-400" />

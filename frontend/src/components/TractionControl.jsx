@@ -92,7 +92,7 @@ const TractionControl = ({ disabled }) => {
     <div className="space-y-6">
       
       {/* Current Mode Display */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="text-center">
             <div className="text-3xl font-bold text-white mb-2">
@@ -114,7 +114,7 @@ const TractionControl = ({ disabled }) => {
       </Card>
 
       {/* Mode Selection */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-cyan-400 mb-6">
             Selección de Modo de Tracción
@@ -124,7 +124,7 @@ const TractionControl = ({ disabled }) => {
             {tractionModes.map((mode) => (
               <Button
                 key={mode.id}
-                variant={activeMode === mode.id ? "default" : "outline"}
+                variant={activeMode === mode.id ? "default" : "outline-solid"}
                 onClick={() => handleModeChange(mode)}
                 disabled={disabled}
                 className={`h-20 flex flex-col ${
@@ -141,7 +141,7 @@ const TractionControl = ({ disabled }) => {
       </Card>
 
       {/* Power Distribution Visualization */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-green-400 mb-6">
             Distribución de Potencia Actual

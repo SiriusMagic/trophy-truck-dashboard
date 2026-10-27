@@ -163,7 +163,7 @@ const TireSystem = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Header del Sistema de Neumáticos */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -176,7 +176,7 @@ const TireSystem = ({ vehicleData, disabled }) => {
               <Badge variant="outline" className="text-orange-400 border-orange-400">
                 PRESIÓN PROMEDIO: {getAveragePressure().toFixed(1)} PSI
               </Badge>
-              <Badge variant={aiTireActive ? "destructive" : "outline"}>
+              <Badge variant={aiTireActive ? "destructive" : "outline-solid"}>
                 {aiTireActive ? "🧠 IA ACTIVA" : "MANUAL"}
               </Badge>
             </div>
@@ -205,13 +205,13 @@ const TireSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Modo de Control */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-cyan-400 mb-6">Modo de Control</h4>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Button
-              variant={tireControlMode === 'individual' ? "default" : "outline"}
+              variant={tireControlMode === 'individual' ? "default" : "outline-solid"}
               onClick={() => handleTireControlModeChange('individual')}
               disabled={disabled}
               className="flex flex-col h-20 space-y-1"
@@ -221,7 +221,7 @@ const TireSystem = ({ vehicleData, disabled }) => {
             </Button>
             
             <Button
-              variant={tireControlMode === 'front' ? "default" : "outline"}
+              variant={tireControlMode === 'front' ? "default" : "outline-solid"}
               onClick={() => handleTireControlModeChange('front')}
               disabled={disabled}
               className="flex flex-col h-20 space-y-1"
@@ -231,7 +231,7 @@ const TireSystem = ({ vehicleData, disabled }) => {
             </Button>
             
             <Button
-              variant={tireControlMode === 'rear' ? "default" : "outline"}
+              variant={tireControlMode === 'rear' ? "default" : "outline-solid"}
               onClick={() => handleTireControlModeChange('rear')}
               disabled={disabled}
               className="flex flex-col h-20 space-y-1"
@@ -241,7 +241,7 @@ const TireSystem = ({ vehicleData, disabled }) => {
             </Button>
             
             <Button
-              variant={aiTireActive ? "destructive" : "outline"}
+              variant={aiTireActive ? "destructive" : "outline-solid"}
               onClick={handleAiTireToggle}
               disabled={disabled}
               className="flex flex-col h-20 space-y-1"
@@ -254,7 +254,7 @@ const TireSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Controles de Presión */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-purple-400 mb-6">
             {tireControlMode === 'individual' ? 'Control Individual' :
@@ -393,7 +393,7 @@ const TireSystem = ({ vehicleData, disabled }) => {
           const StatusIcon = status.icon;
           
           return (
-            <Card key={tire} className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+            <Card key={tire} className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
               <CardContent className="p-4 text-center">
                 <div className="flex items-center justify-center space-x-2 mb-2">
                   <CircleDot className="w-5 h-5 text-orange-400" />

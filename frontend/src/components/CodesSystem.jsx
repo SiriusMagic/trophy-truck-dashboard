@@ -168,10 +168,10 @@ const CodesSystem = ({ vehicleData, disabled }) => {
     const colors = {
       critical: 'destructive',
       high: 'destructive', 
-      medium: 'outline',
+      medium: 'outline-solid',
       low: 'secondary'
     };
-    return colors[severity] || 'outline';
+    return colors[severity] || 'outline-solid';
   };
 
   const clearCode = (code) => {
@@ -189,7 +189,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Header del Sistema de Códigos */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -199,7 +199,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
               </h3>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant={activeCodes.length > 0 ? "destructive" : "outline"}>
+              <Badge variant={activeCodes.length > 0 ? "destructive" : "outline-solid"}>
                 {activeCodes.length} CÓDIGOS ACTIVOS
               </Badge>
               <Badge variant="outline">
@@ -219,7 +219,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
                   placeholder="Ej: P001, batería, motor..."
-                  className="w-full pl-10 pr-4 py-2 bg-slate-800/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  className="w-full pl-10 pr-4 py-2 bg-slate-800/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-hidden focus:border-cyan-500"
                 />
               </div>
             </div>
@@ -234,7 +234,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
                 ].map((category) => (
                   <Button
                     key={category.id}
-                    variant={categoryFilter === category.id ? "default" : "outline"}
+                    variant={categoryFilter === category.id ? "default" : "outline-solid"}
                     onClick={() => setCategoryFilter(category.id)}
                     className="flex items-center justify-center space-x-1 text-xs"
                   >
@@ -250,7 +250,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
 
       {/* Códigos Activos */}
       {activeCodes.length > 0 && (
-        <Card className="bg-slate-900/50 border-red-500/50 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-red-500/50 backdrop-blur-xs">
           <CardContent className="p-6">
             <h4 className="text-lg font-semibold text-red-400 mb-4 flex items-center">
               <XCircle className="w-5 h-5 mr-2" />
@@ -297,7 +297,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
       )}
 
       {/* Biblioteca de Códigos */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-cyan-400 mb-4">
             Biblioteca de Códigos de Diagnóstico
@@ -359,7 +359,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
 
       {/* Estadísticas de Códigos */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-red-400">
               {Object.entries(codigos_de_fallo).filter(([_, data]) => data.severity === 'critical' || data.severity === 'high').length}
@@ -368,7 +368,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
           </CardContent>
         </Card>
         
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-cyan-400">
               {Object.entries(codigos_de_fallo).filter(([_, data]) => data.category === 'drone').length}
@@ -377,7 +377,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
           </CardContent>
         </Card>
         
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-green-400">
               {Object.entries(codigos_de_fallo).filter(([_, data]) => data.category === 'vehicle').length}
@@ -386,7 +386,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
           </CardContent>
         </Card>
         
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-purple-400">
               {activeCodes.length}

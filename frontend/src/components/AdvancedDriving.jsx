@@ -159,7 +159,7 @@ const AdvancedDriving = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Steer-by-Wire System */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-purple-400 mb-6">
             Sistema de Dirección Electrónica (Steer-by-Wire)
@@ -229,7 +229,7 @@ const AdvancedDriving = ({ vehicleData, disabled }) => {
                   {['comfort', 'balanced', 'track'].map((mode) => (
                     <Button
                       key={mode}
-                      variant={torqueVectoring.mode === mode ? "default" : "outline"}
+                      variant={torqueVectoring.mode === mode ? "default" : "outline-solid"}
                       onClick={() => setTorqueVectoring(prev => ({ ...prev, mode }))}
                       disabled={disabled}
                       className={`w-full justify-start text-sm ${
@@ -248,7 +248,7 @@ const AdvancedDriving = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* 4-Motor System */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-cyan-400 mb-6">
             Sistema de 4 Motores Independientes por Semieje
@@ -307,7 +307,7 @@ const AdvancedDriving = ({ vehicleData, disabled }) => {
                 {['open', 'locked', 'disconnected'].map((mode) => (
                   <Button
                     key={mode}
-                    variant={wheelMotors.differential.front === mode ? "default" : "outline"}
+                    variant={wheelMotors.differential.front === mode ? "default" : "outline-solid"}
                     onClick={() => handleDifferentialChange('front', mode)}
                     disabled={disabled}
                     className={`flex-1 text-xs ${
@@ -327,7 +327,7 @@ const AdvancedDriving = ({ vehicleData, disabled }) => {
                 {['open', 'locked', 'disconnected'].map((mode) => (
                   <Button
                     key={mode}
-                    variant={wheelMotors.differential.rear === mode ? "default" : "outline"}
+                    variant={wheelMotors.differential.rear === mode ? "default" : "outline-solid"}
                     onClick={() => handleDifferentialChange('rear', mode)}
                     disabled={disabled}
                     className={`flex-1 text-xs ${
@@ -344,7 +344,7 @@ const AdvancedDriving = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Solar Panels System */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-yellow-400 mb-6">
             Paneles Solares Integrados - Captura Continua de Energía
@@ -423,7 +423,7 @@ const AdvancedDriving = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Modular Driving System */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-green-400 mb-6">
             Sistema de Conducción Modular
@@ -451,7 +451,7 @@ const AdvancedDriving = ({ vehicleData, disabled }) => {
               ].map((mode) => (
                 <Button
                   key={mode.id}
-                  variant={drivingMode.current === mode.id ? "default" : "outline"}
+                  variant={drivingMode.current === mode.id ? "default" : "outline-solid"}
                   onClick={() => handleDrivingModeChange(mode.id)}
                   disabled={disabled || !drivingMode.availableModes.includes(mode.id)}
                   className={`h-20 flex flex-col ${
