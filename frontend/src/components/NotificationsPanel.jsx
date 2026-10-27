@@ -1,4 +1,3 @@
-import React from "react";
 import { Bell, AlertTriangle, Usb, X } from "lucide-react";
 
 const NotificationsPanel = ({ open, onClose, items = [] }) => {

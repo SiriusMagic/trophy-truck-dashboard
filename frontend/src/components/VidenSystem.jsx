@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -199,14 +199,6 @@ const VidenSystem = () => {
       case 'success': return 'text-green-400';
       case 'failed': return 'text-red-400';
       default: return 'text-blue-400';
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'success': return CheckCircle;
-      case 'failed': return XCircle;
-      default: return Loader2;
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -141,7 +141,7 @@ const CodesSystem = ({ vehicleData, disabled }) => {
     let filtered = Object.entries(codigos_de_fallo);
     
     if (categoryFilter !== 'all') {
-      filtered = filtered.filter(([code, data]) => data.category === categoryFilter);
+      filtered = filtered.filter(([, data]) => data.category === categoryFilter);
     }
     
     if (searchFilter) {

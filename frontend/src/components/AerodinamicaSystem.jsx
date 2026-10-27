@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Slider } from './ui/slider';
-import { Switch } from './ui/switch';
 import { 
   Wind, 
   Brain, 
@@ -17,6 +16,90 @@ import {
   RotateCw,
   Zap
 } from 'lucide-react';
+
+const ComponenteAerodinamico = ({
+  modoControl,
+  titulo, 
+  icono: Icon, 
+  estado, 
+  setEstado, 
+  unidad = "%",
+  descripcion 
+}) => (
+  <Card className="bg-slate-800/50 border-slate-600">
+    <CardHeader className="pb-3">
+      <CardTitle className="flex items-center gap-2 text-sm text-blue-400">
+        <Icon className="w-4 h-4" />
+        {titulo}
+      </CardTitle>
+      <p className="text-xs text-gray-500">{descripcion}</p>
+    </CardHeader>
+    <CardContent className="space-y-4">
+      {modoControl === 'uniforme' ? (
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-gray-400">Control Uniforme</span>
+            <Badge variant="outline" className="text-blue-400 border-blue-400">
+              {estado.uniforme}{unidad}
+            </Badge>
+          </div>
+          <Slider
+            value={[estado.uniforme]}
+            onValueChange={(value) => setEstado(prev => ({...prev, uniforme: value[0]}))}
+            min={0}
+            max={100}
+            step={1}
+            className="w-full"
+          />
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {/* Control Izquierdo */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-400 flex items-center gap-1">
+                <ArrowLeft className="w-3 h-3" />
+                Izquierdo
+              </span>
+              <Badge variant="outline" className="text-green-400 border-green-400">
+                {estado.izquierdo}{unidad}
+              </Badge>
+            </div>
+            <Slider
+              value={[estado.izquierdo]}
+              onValueChange={(value) => setEstado(prev => ({...prev, izquierdo: value[0]}))}
+              min={0}
+              max={100}
+              step={1}
+              className="w-full"
+            />
+          </div>
+          
+          {/* Control Derecho */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-400 flex items-center gap-1">
+                <ArrowRight className="w-3 h-3" />
+                Derecho
+              </span>
+              <Badge variant="outline" className="text-orange-400 border-orange-400">
+                {estado.derecho}{unidad}
+              </Badge>
+            </div>
+            <Slider
+              value={[estado.derecho]}
+              onValueChange={(value) => setEstado(prev => ({...prev, derecho: value[0]}))}
+              min={0}
+              max={100}
+              step={1}
+              className="w-full"
+            />
+          </div>
+        </div>
+      )}
+    </CardContent>
+  </Card>
+);
 
 const AerodinamicaSystem = () => {
   // Estado principal
@@ -111,89 +194,6 @@ const AerodinamicaSystem = () => {
     setDifusorTrasero({ uniforme: 70, izquierdo: 68, derecho: 72 });
     setAleron({ uniforme: 60, izquierdo: 58, derecho: 62 });
   };
-
-  const ComponenteAerodinamico = ({ 
-    titulo, 
-    icono: Icon, 
-    estado, 
-    setEstado, 
-    unidad = "%",
-    descripcion 
-  }) => (
-    <Card className="bg-slate-800/50 border-slate-600">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-sm text-blue-400">
-          <Icon className="w-4 h-4" />
-          {titulo}
-        </CardTitle>
-        <p className="text-xs text-gray-500">{descripcion}</p>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {modoControl === 'uniforme' ? (
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-400">Control Uniforme</span>
-              <Badge variant="outline" className="text-blue-400 border-blue-400">
-                {estado.uniforme}{unidad}
-              </Badge>
-            </div>
-            <Slider
-              value={[estado.uniforme]}
-              onValueChange={(value) => setEstado(prev => ({...prev, uniforme: value[0]}))}
-              min={0}
-              max={100}
-              step={1}
-              className="w-full"
-            />
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {/* Control Izquierdo */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-400 flex items-center gap-1">
-                  <ArrowLeft className="w-3 h-3" />
-                  Izquierdo
-                </span>
-                <Badge variant="outline" className="text-green-400 border-green-400">
-                  {estado.izquierdo}{unidad}
-                </Badge>
-              </div>
-              <Slider
-                value={[estado.izquierdo]}
-                onValueChange={(value) => setEstado(prev => ({...prev, izquierdo: value[0]}))}
-                min={0}
-                max={100}
-                step={1}
-                className="w-full"
-              />
-            </div>
-            
-            {/* Control Derecho */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-400 flex items-center gap-1">
-                  <ArrowRight className="w-3 h-3" />
-                  Derecho
-                </span>
-                <Badge variant="outline" className="text-orange-400 border-orange-400">
-                  {estado.derecho}{unidad}
-                </Badge>
-              </div>
-              <Slider
-                value={[estado.derecho]}
-                onValueChange={(value) => setEstado(prev => ({...prev, derecho: value[0]}))}
-                min={0}
-                max={100}
-                step={1}
-                className="w-full"
-              />
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
 
   return (
     <div className="h-full overflow-y-auto p-6 space-y-6">
@@ -327,6 +327,7 @@ const AerodinamicaSystem = () => {
           {/* Componentes Aerodinámicos */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ComponenteAerodinamico
+              modoControl={modoControl}
               titulo="Splitter Delantero"
               icono={ArrowDown}
               estado={splitterDelantero}
@@ -335,6 +336,7 @@ const AerodinamicaSystem = () => {
             />
             
             <ComponenteAerodinamico
+              modoControl={modoControl}
               titulo="Canards / Dive Planes"
               icono={Zap}
               estado={canards}
@@ -343,6 +345,7 @@ const AerodinamicaSystem = () => {
             />
             
             <ComponenteAerodinamico
+              modoControl={modoControl}
               titulo="Difusor Trasero"
               icono={ArrowUp}
               estado={difusorTrasero}
@@ -351,6 +354,7 @@ const AerodinamicaSystem = () => {
             />
             
             <ComponenteAerodinamico
+              modoControl={modoControl}
               titulo="Alerón / Spoiler"
               icono={Target}
               estado={aleron}

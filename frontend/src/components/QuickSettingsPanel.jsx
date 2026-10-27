@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Wifi, Camera, MonitorUp, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useToast } from "../hooks/use-toast";
@@ -25,7 +25,7 @@ const QuickSettingsPanel = ({ open, onClose }) => {
       }
       setSharing(true);
       toast({ title: "Compartir pantalla", description: "Transmitiendo (si el navegador lo permite)." });
-    } catch (e) {
+    } catch {
       toast({ title: "Compartir pantalla", description: "Permiso denegado o no soportado.", variant: "destructive" });
     }
   };

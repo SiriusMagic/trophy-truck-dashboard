@@ -15,10 +15,10 @@ export const NeuronsProvider = ({ children }) => {
   });
 
   React.useEffect(() => {
-    try { localStorage.setItem("neuronsActive", JSON.stringify(neuronsActive)); } catch {}
+    try { localStorage.setItem("neuronsActive", JSON.stringify(neuronsActive)); } catch { /* sin almacenamiento disponible */ }
   }, [neuronsActive]);
   React.useEffect(() => {
-    try { localStorage.setItem("neuronsData", JSON.stringify(neuronsData)); } catch {}
+    try { localStorage.setItem("neuronsData", JSON.stringify(neuronsData)); } catch { /* sin almacenamiento disponible */ }
   }, [neuronsData]);
 
   return (

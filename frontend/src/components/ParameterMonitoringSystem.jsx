@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
@@ -324,7 +324,7 @@ const ParameterMonitoringSystem = ({ vehicleData, disabled }) => {
             <div className="space-y-4">
               <h5 className="font-semibold text-orange-400">Frenos Delanteros</h5>
               
-              {['frontLeft', 'frontRight'].map((brake, index) => {
+              {['frontLeft', 'frontRight'].map((brake) => {
                 const side = brake === 'frontLeft' ? 'Izquierdo' : 'Derecho';
                 const padStatus = getBrakeTemp(brakeData[brake].padTemp);
                 const discStatus = getBrakeTemp(brakeData[brake].discTemp);
@@ -376,7 +376,7 @@ const ParameterMonitoringSystem = ({ vehicleData, disabled }) => {
             <div className="space-y-4">
               <h5 className="font-semibold text-orange-400">Frenos Traseros</h5>
               
-              {['rearLeft', 'rearRight'].map((brake, index) => {
+              {['rearLeft', 'rearRight'].map((brake) => {
                 const side = brake === 'rearLeft' ? 'Izquierdo' : 'Derecho';
                 const padStatus = getBrakeTemp(brakeData[brake].padTemp);
                 const discStatus = getBrakeTemp(brakeData[brake].discTemp);

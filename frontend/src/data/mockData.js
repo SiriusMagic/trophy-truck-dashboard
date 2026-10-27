@@ -1,4 +1,4 @@
-import { Mountain, Car, Shield, Target, Zap, FlameKindling } from 'lucide-react';
+import { Mountain, Car, Target, Zap } from 'lucide-react';
 
 export const mockData = {
   speed: 85, // km/h

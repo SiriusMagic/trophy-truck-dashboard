@@ -1,19 +1,9 @@
-import React from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { 
-  Zap, 
-  Brain, 
-  Settings,
-  Target,
-  ArrowLeftRight,
-  Cpu
-} from 'lucide-react';
-import { useToast } from '../hooks/use-toast';
+import { Brain, Target, ArrowLeftRight, Cpu } from 'lucide-react';
 
 const PowerControlSystem = ({ 
   powerControlMode, 
@@ -28,7 +18,6 @@ const PowerControlSystem = ({
   setAiPowerActive,
   disabled 
 }) => {
-  const { toast } = useToast();
 
   const handlePowerDistributionChange = (values) => {
     const rear = values[0];

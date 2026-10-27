@@ -1,22 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Switch } from './ui/switch';
-import { 
-  Zap, 
-  Sun, 
-  Shield, 
-  Clock, 
-  Play, 
-  Pause, 
-  RotateCcw,
-  AlertTriangle,
-  CheckCircle,
-  Timer
-} from 'lucide-react';
+import { Zap, Sun, Shield, Clock, Play, Pause, CheckCircle, Timer } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
 const UVHygienizationSystem = ({ vehicleData, disabled }) => {

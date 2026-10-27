@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { 
+import {
   Battery,
   MapPin,
-  Gauge,
   TrendingUp,
   TrendingDown,
   Zap,
   Leaf,
   AlertTriangle,
-  Target
+  Target,
 } from 'lucide-react';
 
-const AutonomyControl = ({ vehicleData, disabled }) => {
+const AutonomyControl = ({ vehicleData }) => {
   const [autonomyData, setAutonomyData] = useState({
     maxRange: 1000, // km por 100% batería
     currentRange: 0,
@@ -24,7 +22,7 @@ const AutonomyControl = ({ vehicleData, disabled }) => {
     projectedRange: 0
   });
 
-  const [drivingHistory, setDrivingHistory] = useState([
+  const [drivingHistory] = useState([
     { time: '14:30', range: 825, efficiency: 4.5 },
     { time: '14:00', range: 845, efficiency: 4.3 },
     { time: '13:30', range: 878, efficiency: 4.1 },

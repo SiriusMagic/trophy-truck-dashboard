@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
@@ -6,7 +6,7 @@ import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Switch } from './ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { 
+import {
   Car,
   DoorOpen,
   DoorClosed,
@@ -19,13 +19,10 @@ import {
   Monitor,
   Mic,
   Lock,
-  Unlock,
   ChevronUp,
-  ChevronDown,
   UserCheck,
   Sparkles,
   Sun,
-  ArrowUpDown
 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 

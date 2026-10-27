@@ -1,17 +1,9 @@
-import React, { useState } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { 
-  Settings, 
-  ArrowUp, 
-  ArrowDown, 
-  RotateCcw,
-  Zap,
-  Gauge
-} from 'lucide-react';
+import { RotateCcw, Zap, Gauge } from 'lucide-react';
 import { virtualGears } from '../data/mockData';
 import { useToast } from '../hooks/use-toast';
 

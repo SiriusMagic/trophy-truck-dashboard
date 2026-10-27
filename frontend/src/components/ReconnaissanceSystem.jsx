@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { Switch } from './ui/switch';
-import { 
+import {
   Plane,
   Map,
   Eye,
@@ -13,25 +12,22 @@ import {
   Car,
   Bike,
   AlertTriangle,
-  MapPin,
   Battery,
   Radar,
   Target,
-  Scan,
   ArrowUp,
   Zap,
-  Navigation,
   Signal,
   Gauge,
   Video,
   Play,
   Pause,
   RotateCw,
-  Maximize2
+  Maximize2,
 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
-const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
+const ReconnaissanceSystem = ({ disabled }) => {
   const [roofHatch, setRoofHatch] = useState(false);
   const [dronesStatus, setDronesStatus] = useState({
     drone1: { 
@@ -736,7 +732,7 @@ const ReconnaissanceSystem = ({ vehicleData, disabled }) => {
                     <div className="text-sm">No hay detecciones activas</div>
                   </div>
                 ) : (
-                  detectedObjects.map((obj, index) => (
+                  detectedObjects.map((obj) => (
                     <div key={obj.id} className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
                       <div className="flex items-center space-x-3">
                         {getObjectIcon(obj.type)}

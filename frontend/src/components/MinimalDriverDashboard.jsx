@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { X, Gauge, Zap, Activity, AlertTriangle, Battery, Car } from "lucide-react";
 
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));

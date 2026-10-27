@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Switch } from './ui/switch';
-import { 
-  CircleDot, 
-  Brain, 
-  Settings, 
-  Target, 
-  ArrowLeftRight, 
+import {
+  CircleDot,
+  Brain,
+  Settings,
+  ArrowLeftRight,
   AlertTriangle,
   TrendingUp,
   TrendingDown,
-  Gauge,
-  Activity,
-  Zap,
   CheckCircle,
-  XCircle
+  XCircle,
 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
@@ -130,7 +126,7 @@ const EnhancedTireSystem = ({ vehicleData, disabled }) => {
         const speed = vehicleData?.speed || 0;
         const terrain = Math.random() > 0.5 ? 'asphalt' : 'offroad';
         
-        let optimalPressures = {};
+        let optimalPressures;
         
         if (terrain === 'offroad') {
           // Presiones más bajas para mejor tracción off-road
