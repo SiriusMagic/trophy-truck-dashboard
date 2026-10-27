@@ -107,7 +107,7 @@ const VehicleControlPanel = ({ open, onClose, motorControls, setMotorControls, c
               </div>
               <div className="grid grid-cols-3 gap-2 mb-3">
                 {TORQUE_MODES.map(m => (
-                  <Button key={m.id} variant={mode === m.id ? "default" : "outline"} onClick={() => handleMode(m.id)} className={`${mode === m.id ? 'bg-yellow-600 hover:bg-yellow-700' : 'border-slate-600'} text-xs`}>
+                  <Button key={m.id} variant={mode === m.id ? "default" : "outline-solid"} onClick={() => handleMode(m.id)} className={`${mode === m.id ? 'bg-yellow-600 hover:bg-yellow-700' : 'border-slate-600'} text-xs`}>
                     {m.name}
                   </Button>
                 ))}

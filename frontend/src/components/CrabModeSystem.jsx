@@ -178,7 +178,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Header del Sistema Modo Cangrejo */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -188,7 +188,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
               </h3>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant={modoCangrejoActivo ? "destructive" : "outline"}>
+              <Badge variant={modoCangrejoActivo ? "destructive" : "outline-solid"}>
                 <IconEstado className="w-3 h-3 mr-1" />
                 {estadoModo.status}
               </Badge>
@@ -238,7 +238,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Control Principal del Modo Cangrejo */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-green-400 mb-6">Control Principal</h4>
           
@@ -279,7 +279,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
                 {/* Botones de dirección */}
                 <div className="grid grid-cols-3 gap-4">
                   <Button
-                    variant={direccionMovimiento === 'left' ? "default" : "outline"}
+                    variant={direccionMovimiento === 'left' ? "default" : "outline-solid"}
                     onClick={() => setDireccionCangrejo('left')}
                     disabled={disabled}
                     className="flex flex-col h-16 space-y-1"
@@ -289,7 +289,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
                   </Button>
                   
                   <Button
-                    variant={direccionMovimiento === 'neutral' ? "default" : "outline"}
+                    variant={direccionMovimiento === 'neutral' ? "default" : "outline-solid"}
                     onClick={() => setDireccionCangrejo('neutral')}
                     disabled={disabled}
                     className="flex flex-col h-16 space-y-1"
@@ -299,7 +299,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
                   </Button>
                   
                   <Button
-                    variant={direccionMovimiento === 'right' ? "default" : "outline"}
+                    variant={direccionMovimiento === 'right' ? "default" : "outline-solid"}
                     onClick={() => setDireccionCangrejo('right')}
                     disabled={disabled}
                     className="flex flex-col h-16 space-y-1"
@@ -344,7 +344,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Visualización de Estado de Dirección */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-blue-400 mb-6 flex items-center">
             <Compass className="w-5 h-5 mr-2" />
@@ -440,7 +440,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         {/* Velocidad Actual */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Gauge className="w-6 h-6 text-cyan-400" />
@@ -456,7 +456,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
         </Card>
         
         {/* Estado del Modo */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <IconEstado className={`w-6 h-6 ${estadoModo.color}`} />
@@ -472,7 +472,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
         </Card>
         
         {/* Ángulo Máximo */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <RotateCw className="w-6 h-6 text-orange-400" />
@@ -491,7 +491,7 @@ const CrabModeSystem = ({ vehicleData, disabled }) => {
 
       {/* Información de Seguridad */}
       {modoCangrejoActivo && (
-        <Card className="bg-yellow-900/20 border-yellow-500/50 backdrop-blur-sm">
+        <Card className="bg-yellow-900/20 border-yellow-500/50 backdrop-blur-xs">
           <CardContent className="p-6">
             <h4 className="text-lg font-semibold text-yellow-400 mb-4 flex items-center">
               <AlertTriangle className="w-5 h-5 mr-2" />

@@ -160,7 +160,7 @@ const ComfortSystems = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Environmental Systems */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-blue-400 mb-6">
             Sistemas Ambientales Inteligentes
@@ -273,7 +273,7 @@ const ComfortSystems = ({ vehicleData, disabled }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Driver Seat */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <h4 className="text-lg font-semibold text-green-400 mb-6 flex items-center">
               <CarSeat className="w-6 h-6 mr-2" />
@@ -343,7 +343,7 @@ const ComfortSystems = ({ vehicleData, disabled }) => {
                 <div className="flex justify-between items-center">
                   <span className="text-green-300 font-medium">Sistema de Masaje</span>
                   <Button
-                    variant={seats.driver.massage.active ? "destructive" : "outline"}
+                    variant={seats.driver.massage.active ? "destructive" : "outline-solid"}
                     size="sm"
                     onClick={() => handleMassageToggle('driver')}
                     disabled={disabled}
@@ -378,7 +378,7 @@ const ComfortSystems = ({ vehicleData, disabled }) => {
 
               {/* Zero Gravity */}
               <Button
-                variant={seats.driver.zeroGravity ? "default" : "outline"}
+                variant={seats.driver.zeroGravity ? "default" : "outline-solid"}
                 onClick={() => handleZeroGravity('driver')}
                 disabled={disabled}
                 className={`w-full h-12 ${seats.driver.zeroGravity ? 'bg-green-600' : ''}`}
@@ -391,7 +391,7 @@ const ComfortSystems = ({ vehicleData, disabled }) => {
         </Card>
 
         {/* Passenger Seat (Similar structure) */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <h4 className="text-lg font-semibold text-blue-400 mb-6 flex items-center">
               <CarSeat className="w-6 h-6 mr-2" />
@@ -456,7 +456,7 @@ const ComfortSystems = ({ vehicleData, disabled }) => {
                 <div className="flex justify-between items-center">
                   <span className="text-blue-300 font-medium">Sistema de Masaje</span>
                   <Button
-                    variant={seats.passenger.massage.active ? "destructive" : "outline"}
+                    variant={seats.passenger.massage.active ? "destructive" : "outline-solid"}
                     size="sm"
                     onClick={() => handleMassageToggle('passenger')}
                     disabled={disabled}
@@ -468,7 +468,7 @@ const ComfortSystems = ({ vehicleData, disabled }) => {
 
               {/* Zero Gravity */}
               <Button
-                variant={seats.passenger.zeroGravity ? "default" : "outline"}
+                variant={seats.passenger.zeroGravity ? "default" : "outline-solid"}
                 onClick={() => handleZeroGravity('passenger')}
                 disabled={disabled}
                 className={`w-full h-12 ${seats.passenger.zeroGravity ? 'bg-blue-600' : ''}`}
@@ -482,7 +482,7 @@ const ComfortSystems = ({ vehicleData, disabled }) => {
       </div>
 
       {/* Sunroof Control */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-yellow-400 mb-6">
             Control de Techo Corredizo Inteligente
@@ -573,7 +573,7 @@ const ComfortSystems = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Window Tinting Control */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-indigo-400 mb-6">
             Control de Atenuación de Ventanas

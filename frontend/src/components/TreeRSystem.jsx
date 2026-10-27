@@ -142,7 +142,7 @@ const TreeRSystem = ({ vehicleData, disabled }) => {
       <div className="space-y-6">
         
         {/* TreeR System Overview */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="text-center">
               <div className="flex items-center justify-center space-x-2 mb-4">
@@ -193,7 +193,7 @@ const TreeRSystem = ({ vehicleData, disabled }) => {
         {/* Individual Energy Sources */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {Object.entries(treeRData.sources).map(([key, source]) => (
-            <Card key={key} className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+            <Card key={key} className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
@@ -280,7 +280,7 @@ const TreeRSystem = ({ vehicleData, disabled }) => {
         </div>
 
         {/* TreeR Performance Analytics */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <h4 className="text-lg font-semibold text-green-400 mb-6">
               Análisis de Rendimiento TreeR
@@ -346,7 +346,7 @@ const TreeRSystem = ({ vehicleData, disabled }) => {
         </Card>
 
         {/* TreeR Formula Display */}
-        <Card className="bg-green-900/20 border-green-500/30 backdrop-blur-sm">
+        <Card className="bg-green-900/20 border-green-500/30 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="text-center">
               <h4 className="text-lg font-semibold text-green-400 mb-4">

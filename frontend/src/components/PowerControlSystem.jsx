@@ -70,7 +70,7 @@ const PowerControlSystem = ({
     <div className="space-y-6">
       
       {/* Power Control Mode Selection */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-yellow-400">
@@ -83,7 +83,7 @@ const PowerControlSystem = ({
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Button
-              variant={powerControlMode === 'axle' ? "default" : "outline"}
+              variant={powerControlMode === 'axle' ? "default" : "outline-solid"}
               onClick={() => setPowerControlMode('axle')}
               disabled={disabled}
               className={`h-20 flex flex-col ${
@@ -98,7 +98,7 @@ const PowerControlSystem = ({
             </Button>
             
             <Button
-              variant={powerControlMode === 'individual' ? "default" : "outline"}
+              variant={powerControlMode === 'individual' ? "default" : "outline-solid"}
               onClick={() => setPowerControlMode('individual')}
               disabled={disabled}
               className={`h-20 flex flex-col ${
@@ -113,7 +113,7 @@ const PowerControlSystem = ({
             </Button>
             
             <Button
-              variant={powerControlMode === 'ai' ? "default" : "outline"}
+              variant={powerControlMode === 'ai' ? "default" : "outline-solid"}
               onClick={() => setPowerControlMode('ai')}
               disabled={disabled}
               className={`h-20 flex flex-col ${
@@ -132,7 +132,7 @@ const PowerControlSystem = ({
 
       {/* Power Control Interface */}
       {powerControlMode === 'axle' && (
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-cyan-400 mb-6">
               Control de Potencia por Ejes
@@ -252,7 +252,7 @@ const PowerControlSystem = ({
       )}
 
       {powerControlMode === 'individual' && (
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-orange-400 mb-6">
               Control Individual de Motores
@@ -428,7 +428,7 @@ const PowerControlSystem = ({
       )}
 
       {powerControlMode === 'ai' && (
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-purple-400">
@@ -536,7 +536,7 @@ const PowerControlSystem = ({
       )}
 
       {/* Power Summary */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-green-400 mb-4">
             Resumen de Potencia Total

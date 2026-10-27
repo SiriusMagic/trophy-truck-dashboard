@@ -55,8 +55,8 @@ docker compose up --build   # http://localhost:3000
 
 ## Tecnología
 
-- **React 19** + **Vite 7**
-- **Tailwind CSS** + componentes **shadcn/ui** (Radix UI)
+- **React 19** + **Vite 8**
+- **Tailwind CSS 4** + componentes **shadcn/ui** (Radix UI)
 - **Three.js** para gráficos 3D
 
 ## Familia de proyectos

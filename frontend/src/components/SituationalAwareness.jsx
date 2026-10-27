@@ -73,13 +73,13 @@ const SituationalAwareness = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Vision Controls */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-green-400">
               Sistema de Visión Avanzada
             </h3>
-            <Badge variant={sentinelMode ? "destructive" : "outline"}>
+            <Badge variant={sentinelMode ? "destructive" : "outline-solid"}>
               {sentinelMode ? "🛡️ SENTINEL ACTIVO" : "MODO NORMAL"}
             </Badge>
           </div>
@@ -137,14 +137,14 @@ const SituationalAwareness = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Sentinel Mode Control */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-blue-400">
               Modo Sentinel - Vigilancia Perimetral
             </h3>
             <Button
-              variant={sentinelMode ? "destructive" : "outline"}
+              variant={sentinelMode ? "destructive" : "outline-solid"}
               onClick={handleSentinelToggle}
               disabled={disabled}
               className="font-bold"
@@ -181,7 +181,7 @@ const SituationalAwareness = ({ vehicleData, disabled }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Object Detection */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-purple-400">
@@ -221,7 +221,7 @@ const SituationalAwareness = ({ vehicleData, disabled }) => {
         </Card>
 
         {/* Topographic Display */}
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-cyan-400">
@@ -263,7 +263,7 @@ const SituationalAwareness = ({ vehicleData, disabled }) => {
       </div>
 
       {/* Vehicle Attitude Monitor */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-yellow-400 mb-4">
             Monitor de Constantes Vitales del Chasis

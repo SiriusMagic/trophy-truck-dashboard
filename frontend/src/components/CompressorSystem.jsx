@@ -179,7 +179,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
     <div className="space-y-6">
       
       {/* Header del Sistema de Compresor */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -189,7 +189,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
               </h3>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant={compressorActive ? "destructive" : "outline"}>
+              <Badge variant={compressorActive ? "destructive" : "outline-solid"}>
                 {compressorActive ? "🌪️ ACTIVO" : "INACTIVO"}
               </Badge>
               <Badge variant="outline" className="text-blue-400">
@@ -229,7 +229,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Controles Manuales */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-green-400 mb-6">Controles Manuales</h4>
           
@@ -259,7 +259,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
               
               <div className="flex space-x-2">
                 <Button
-                  variant={compressorActive && compressorMode === 'ventilation' ? "default" : "outline"}
+                  variant={compressorActive && compressorMode === 'ventilation' ? "default" : "outline-solid"}
                   onClick={() => activateCompressor('ventilation', true)}
                   disabled={disabled}
                   className="flex-1"
@@ -302,7 +302,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
               
               <div className="flex space-x-2">
                 <Button
-                  variant={compressorActive && compressorMode === 'brake_cooling' ? "destructive" : "outline"}
+                  variant={compressorActive && compressorMode === 'brake_cooling' ? "destructive" : "outline-solid"}
                   onClick={() => activateBrakeCooling(false)}
                   disabled={disabled}
                   className="flex-1"
@@ -312,7 +312,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
                 </Button>
                 
                 <Button
-                  variant={compressorActive && compressorMode === 'both' ? "default" : "outline"}
+                  variant={compressorActive && compressorMode === 'both' ? "default" : "outline-solid"}
                   onClick={() => activateCompressor('both', true)}
                   disabled={disabled}
                   className="flex-1"
@@ -328,7 +328,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
 
       {/* Configuración del Compresor */}
       {compressorActive && (
-        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
           <CardContent className="p-6">
             <h4 className="text-lg font-semibold text-purple-400 mb-6">Configuración de Potencia</h4>
             
@@ -428,7 +428,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
       )}
 
       {/* Configuración Automática */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-orange-400 mb-6">Configuración Automática</h4>
           
@@ -516,7 +516,7 @@ const CompressorSystem = ({ vehicleData, disabled }) => {
       </Card>
 
       {/* Monitoreo de Temperatura de Frenos */}
-      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="text-lg font-semibold text-red-400 mb-6 flex items-center">
             <Disc className="w-5 h-5 mr-2" />

@@ -53,7 +53,7 @@ const QuickSettingsPanel = ({ open, onClose }) => {
           <label className="inline-flex items-center cursor-pointer">
             <input type="checkbox" className="sr-only" checked={wifiOn} onChange={() => setWifiOn(v => !v)} />
             <div className={`w-10 h-5 rounded-full transition ${wifiOn ? "bg-cyan-500" : "bg-slate-600"}`}>
-              <div className={`h-5 w-5 bg-white rounded-full shadow -mt-0.5 transition ${wifiOn ? "translate-x-5" : "translate-x-0"}`}></div>
+              <div className={`h-5 w-5 bg-white rounded-full shadow-sm -mt-0.5 transition ${wifiOn ? "translate-x-5" : "translate-x-0"}`}></div>
             </div>
           </label>
         </div>
