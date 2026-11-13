@@ -21,4 +21,4 @@ docker compose up --build   # desde la raíz, sirve con Nginx
 - **Todo por pull request** hacia `main`, con las pruebas en verde antes de fusionar.
 - **Probar antes de subir**: ejecuta las pruebas del repo; si cambia la interfaz, pruébala en un navegador.
 - **Idioma**: README, PRs y comentarios para el usuario en español, claros y sin jerga.
-- **Dependabot**: las actualizaciones menores se fusionan solas si las pruebas pasan; las mayores se revisan a mano.
+- **Dependencias**: no hay Dependabot (se quitó porque daba problemas). Las versiones se suben a mano y solo cuando hace falta.

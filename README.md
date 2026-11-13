@@ -60,7 +60,7 @@ cd frontend
 yarn test:e2e   # abre los 24 módulos del menú y el tablero 3D en Chromium, sin errores
 ```
 
-GitHub las ejecuta en cada cambio. Las actualizaciones menores de Dependabot se fusionan solas cuando las pruebas pasan.
+GitHub las ejecuta en cada cambio.
 
 ## Tecnología
 
