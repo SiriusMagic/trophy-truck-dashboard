@@ -18,7 +18,7 @@ const TORQUE_MODES = [
   { id: "sport", name: "Deportivo", amperage: 220 }
 ];
 
-const VehicleControlPanel = ({ open, onClose, motorControls, setMotorControls, currentGear, setCurrentGear }) => {
+const VehicleControlPanel = ({ open, onClose, motorControls, setMotorControls, currentGear, setCurrentGear, inline = false }) => {
   const mc = motorControls || { rear: { voltage: 400, amperage: 150 }, front: { voltage: 380, amperage: 120 } };
   const [pedal, setPedal] = useState(50); // 0..100
   const [mode, setMode] = useState("norm");
@@ -69,7 +69,7 @@ const VehicleControlPanel = ({ open, onClose, motorControls, setMotorControls, c
 
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 z-40 bg-slate-950/95 border-t border-slate-800 backdrop-blur-md transition-transform duration-300 ease-in-out ${open ? "translate-y-0" : "translate-y-full"}`}
+      className={inline ? "inline-tool" : `fixed inset-x-0 bottom-0 z-40 bg-slate-950/95 border-t border-slate-800 backdrop-blur-md transition-transform duration-300 ease-in-out ${open ? "translate-y-0" : "translate-y-full"}`}
       role="dialog"
       aria-hidden={!open}
     >

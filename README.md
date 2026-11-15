@@ -1,6 +1,6 @@
 # Trophy Truck Eléctrico — Panel de Sistemas
 
-Panel de control futurista para un **trophy truck eléctrico** (camioneta todoterreno de competición). Muestra telemetría (velocidad, RPM, torque, batería, temperatura) y más de 25 módulos para controlar el vehículo.
+Panel de control para un **trophy truck eléctrico** (camioneta todoterreno de competición). Mantiene el tablero visible mientras permite abrir 21 funciones de control en un panel integrado.
 
 > ✅ **Funciona 100 % en el navegador.** No necesita servidor, base de datos ni Vercel. Los datos son simulados (`frontend/src/data/mockData.js`).
 
@@ -11,8 +11,7 @@ Panel de control futurista para un **trophy truck eléctrico** (camioneta todote
 - **Suspensión, neumáticos y compresor**.
 - **Modo cangrejo**: dirección en las cuatro ruedas.
 - **Aerodinámica, conducción autónoma y avanzada**.
-- **Reconocimiento, sensores y conciencia situacional**.
-- **Seguridad, códigos y geocercas**.
+- **Sensores, seguridad y códigos**.
 - **Confort e higienización UV**.
 - **Diagnóstico y monitoreo de parámetros**.
 
@@ -72,7 +71,7 @@ yarn build && npx cap add android && npx cap open android
 
 ```bash
 cd frontend
-yarn test:e2e   # abre los 24 módulos del menú y el tablero 3D en Chromium, sin errores
+  yarn test:e2e   # abre los 21 módulos integrados y verifica el tablero 3D
 ```
 
 GitHub las ejecuta en cada cambio. Las actualizaciones menores de Dependabot se fusionan solas cuando las pruebas pasan.
@@ -90,7 +89,6 @@ GitHub las ejecuta en cada cambio. Las actualizaciones menores de Dependabot se 
 |---|---|
 | trophy-truck-ui-alfa | Versión alfa original (archivada) |
 | trophy-truck-ui-3d | + modelo 3D y panel estilo BMW (archivada) |
-| trophy-truck-ui-neuronal | + red neuronal visual (archivada) |
 | **trophy-truck-dashboard** | **Versión unificada: incluye todo lo anterior (este repo)** |
 
 ## Licencia

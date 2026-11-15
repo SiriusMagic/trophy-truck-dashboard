@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { Brain, Target, ArrowLeftRight, Cpu } from 'lucide-react';
+import { Target, ArrowLeftRight, Cpu } from 'lucide-react';
 
 const PowerControlSystem = ({ 
   powerControlMode, 
@@ -111,7 +111,7 @@ const PowerControlSystem = ({
                   : 'border-slate-600 hover:border-purple-400'
               }`}
             >
-              <Brain className="w-8 h-8 mb-2" />
+              <Cpu className="w-8 h-8 mb-2" />
               <span className="text-sm font-bold">IA INTELIGENTE</span>
               <span className="text-xs text-slate-300">Automático</span>
             </Button>
@@ -429,7 +429,7 @@ const PowerControlSystem = ({
                 disabled={disabled}
                 className={`font-bold ${aiPowerActive ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
               >
-                <Brain className="w-5 h-5 mr-2" />
+                <Cpu className="w-5 h-5 mr-2" />
                 {aiPowerActive ? 'IA ACTIVA' : 'ACTIVAR IA'}
               </Button>
             </div>
@@ -476,8 +476,8 @@ const PowerControlSystem = ({
                           <span className="text-purple-400">ACTIVO</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Modelo neuronal:</span>
-                          <span className="text-purple-400">GPT-DRIVE-v2</span>
+                          <span className="text-slate-400">Modelo de control:</span>
+                          <span className="text-purple-400">DRIVE-CONTROL-v2</span>
                         </div>
                       </div>
                     </CardContent>
@@ -510,7 +510,7 @@ const PowerControlSystem = ({
               </div>
             ) : (
               <div className="text-center py-12">
-                <Brain className="w-16 h-16 mx-auto mb-4 text-slate-600" />
+                <Cpu className="w-16 h-16 mx-auto mb-4 text-slate-600" />
                 <div className="text-slate-400 mb-4">
                   La IA analizará el terreno, patrones de conducción y optimizará 
                   automáticamente la distribución de potencia en tiempo real.
