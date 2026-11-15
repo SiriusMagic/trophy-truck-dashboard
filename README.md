@@ -53,6 +53,22 @@ Te dará un enlace `https://….trycloudflare.com` que puedes abrir desde el cel
 docker compose up --build   # http://localhost:3000
 ```
 
+### Opción 5 — App de Android (APK)
+
+GitHub compila un APK automáticamente (con [Capacitor](https://capacitorjs.com/)):
+
+- **Versión de `main`:** en la página del repo → **Releases** → **APK más reciente** → descarga `trophy-truck.apk`.
+- **Versión de un pull request:** pestaña **Actions** → la ejecución "APK Android" → sección **Artifacts** (viene en un .zip).
+
+En el celular, abre el archivo y acepta "instalar apps de origen desconocido". Es un APK de prueba (sin firma de tienda), para probar, no para publicar en Google Play.
+
+Para compilarlo en una computadora con Android Studio:
+
+```bash
+cd frontend
+yarn build && npx cap add android && npx cap open android
+```
+
 ## Pruebas
 
 ```bash
@@ -67,6 +83,7 @@ GitHub las ejecuta en cada cambio. Las actualizaciones menores de Dependabot se 
 - **React 19** + **Vite 8**
 - **Tailwind CSS 4** + componentes **shadcn/ui** (Radix UI)
 - **Three.js** para gráficos 3D
+- **Capacitor 8** para empaquetar como app de Android
 
 ## Familia de proyectos
 

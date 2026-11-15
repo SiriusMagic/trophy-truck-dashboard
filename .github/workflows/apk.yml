@@ -1,0 +1,60 @@
+# Compila la app como APK de Android (con Capacitor).
+# - En cada pull request: el APK queda en la pestaña "Actions" → la ejecución → "Artifacts".
+# - En cada cambio a main: además se publica en Releases como "APK más reciente",
+#   para descargarlo directo desde el celular.
+name: APK Android
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # para publicar el APK en Releases
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: npx cap add android
+      - name: Compilar APK
+        working-directory: frontend/android
+        run: ./gradlew assembleDebug --no-daemon
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk trophy-truck.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trophy-truck-apk
+          path: frontend/trophy-truck.apk
+          retention-days: 14
+      - name: Publicar en Releases
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-ultima
+          name: APK más reciente
+          prerelease: true
+          make_latest: false
+          body: "APK de prueba generado automáticamente desde `main` (${{ github.sha }})."
+          files: frontend/trophy-truck.apk

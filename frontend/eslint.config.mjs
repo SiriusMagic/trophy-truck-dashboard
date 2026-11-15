@@ -3,7 +3,7 @@ import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 
 export default [
-  { ignores: ["public/**", "build/**", "dist/**", "node_modules/**", "playwright-report/**", "test-results/**"] },
+  { ignores: ["public/**", "build/**", "dist/**", "node_modules/**", "playwright-report/**", "test-results/**", "android/**"] },
   js.configs.recommended,
   reactHooks.configs.flat.recommended,
   {
