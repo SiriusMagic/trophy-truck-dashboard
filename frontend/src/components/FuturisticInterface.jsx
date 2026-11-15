@@ -169,7 +169,7 @@ const FuturisticInterface = () => {
   };
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-white overflow-hidden">
+    <div className={`tt-app-shell h-screen w-screen bg-slate-950 text-white overflow-hidden ${!activeSection ? "tt-dashboard-active" : ""}`}>
       {!isLandscape && (
         <div className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center text-center p-6">
           <div className="flex items-center gap-3 mb-4"><RotateCcw className="w-6 h-6 text-cyan-400" /><span className="text-xl font-semibold">Gira tu dispositivo</span></div>
@@ -179,7 +179,7 @@ const FuturisticInterface = () => {
       )}
 
       <div className="h-full w-full flex">
-        <aside className="w-64 bg-slate-900/80 border-r border-slate-800 h-full flex flex-col">
+        <aside className="tt-module-sidebar w-64 bg-slate-900/80 border-r border-slate-800 h-full flex flex-col">
           <div className="px-4 py-3 border-b border-slate-800">
             <div onClick={() => setActiveSection(null)} className="cursor-pointer select-none">
               <div className="text-lg font-bold">Trophy Truck</div>
@@ -200,7 +200,7 @@ const FuturisticInterface = () => {
           </nav>
           <div className="px-3 py-2 text-xs text-slate-500 border-t border-slate-800">Horizontal obligatorio</div>
         </aside>
-        <main className="flex-1 min-w-0 h-full overflow-y-auto"><div className="h-full p-3 sm:p-4"><Suspense fallback={<div className="h-full flex items-center justify-center text-slate-400">Cargando módulo…</div>}>{renderActive()}</Suspense></div></main>
+        <main className="tt-content-area flex-1 min-w-0 h-full overflow-y-auto"><div className="h-full p-3 sm:p-4"><Suspense fallback={<div className="h-full flex items-center justify-center text-slate-400">Cargando módulo…</div>}>{renderActive()}</Suspense></div></main>
       </div>
 
       <NotificationsPanel open={panelOpen === 'notifications'} onClose={() => setPanelOpen(null)} />

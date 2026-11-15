@@ -1,303 +1,70 @@
 import { useEffect, useRef, useState } from "react";
-import { Badge } from "./ui/badge";
-import { Card, CardContent } from "./ui/card";
-import { Progress } from "./ui/progress";
 import {
-  Wifi,
-  Bluetooth,
-  Battery,
-  Gauge,
-  Thermometer,
-  Bell,
-  SlidersHorizontal,
-  Car,
+  Activity, Bell, Car, ChevronRight, Compass,
+  Gauge, Leaf, MapPin, Menu, Mic, Navigation, Phone,
+  Play, Settings2, ShieldCheck, SlidersHorizontal, Sparkles, Thermometer,
+  Wifi, Wind, Wrench, Zap,
 } from "lucide-react";
 import { useNeuralControls } from "../hooks/useNeuralControls";
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// Accept optional callbacks to open overlay panels from parent
-const DashboardPanel = ({
-  onOpenNotifications,
-  onOpenQuickSettings,
-  onOpenVehicleControl,
-  onOpenMinimalDashboard
-}) => {
-  const [systemStatus] = useState({ battery: 78, range: 456, connectivity: true, health: 97, cycles: 1247 });
+const TelemetryCard = ({ icon: Icon, label, value, unit, tone, progress, testId }) => (
+  <div className={`tt-telemetry tt-tone-${tone}`}>
+    <div className="tt-telemetry-top"><Icon size={18} strokeWidth={2.2} /><span>{label}</span><ChevronRight size={16} className="ml-auto opacity-70" /></div>
+    <div className="tt-telemetry-value" data-testid={testId}>{value}<small>{unit}</small></div>
+    <div className="tt-progress"><span style={{ width: `${Math.min(100, progress)}%` }} /></div>
+  </div>
+);
+
+const StatusCard = ({ icon: Icon, label, value, tone = "green" }) => (
+  <div className="tt-status-card"><Icon size={22} className={`tt-status-icon tt-${tone}`} /><div><strong>{label}</strong><span className={`tt-status-value tt-${tone}`}><i />{value}</span></div><ChevronRight size={17} className="ml-auto opacity-70" /></div>
+);
+
+const GaugeRing = ({ type, value, label, unit, tone }) => (
+  <div className={`tt-ring tt-ring-${tone}`}><div className="tt-ring-inner"><span>{label}</span><strong>{value}</strong><small>{unit}</small></div><div className="tt-ring-sweep" /><div className="tt-ring-label">{type}</div></div>
+);
+
+const DashboardPanel = ({ onOpenNotifications, onOpenQuickSettings, onOpenVehicleControl, onOpenMinimalDashboard }) => {
+  const [systemStatus] = useState({ battery: 78 });
+  const [driveMode, setDriveMode] = useState("Normal");
   const mountRef = useRef(null);
-  const sceneRef = useRef(null);
   const neuralRef = useRef({ active: false, animationSpeed: 1, brightness: 0.5 });
-  const [loadingStatus, setLoadingStatus] = useState('Cargando 3D...');
-
-  // Control neuronal: cuando está activo, sus salidas reemplazan los valores del dashboard.
   const { active: neuralActive, controls: neural } = useNeuralControls();
 
-  // Mantener el ref sincronizado para el loop de animación 3D.
+  useEffect(() => { neuralRef.current = { active: neuralActive, animationSpeed: neural.animationSpeed, brightness: neural.brightness }; }, [neuralActive, neural.animationSpeed, neural.brightness]);
+
   useEffect(() => {
-    neuralRef.current = {
-      active: neuralActive,
-      animationSpeed: neural.animationSpeed,
-      brightness: neural.brightness,
-    };
-  }, [neuralActive, neural.animationSpeed, neural.brightness]);
-
-  
-  useEffect(() => {
-    if (!mountRef.current) return;
-
-    // Configurar escena Three.js
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x060a0f);
-    
-    const camera = new THREE.PerspectiveCamera(75, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    mountRef.current.appendChild(renderer.domElement);
-
-    // Iluminación
-    const ambientLight = new THREE.AmbientLight(0x4ef3ff, 0.6);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0x7ff8ff, 1);
-    directionalLight.position.set(5, 10, 7);
-    scene.add(directionalLight);
-
-    // Controles
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-
-    // Crear vehículo básico si no hay GLB
-    const vehicleGroup = new THREE.Group();
-    
-    // Cuerpo principal
-    const bodyGeometry = new THREE.BoxGeometry(4, 1, 2);
-    const bodyMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x4ef3ff,
-      metalness: 0.1,
-      roughness: 0.15,
-      transmission: 0.85,
-      thickness: 0.4,
-      transparent: true,
-      opacity: 0.35
-    });
-    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    body.position.y = 1;
-    vehicleGroup.add(body);
-
-    // Ruedas
-    const wheelGeometry = new THREE.TorusGeometry(0.5, 0.15, 12, 48);
-    const wheelMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x4ef3ff,
-      metalness: 0.2,
-      roughness: 0.3,
-      transparent: true,
-      opacity: 0.8
-    });
-    
-    const wheelPositions = [
-      [-1.5, 0.5, 1], [-1.5, 0.5, -1],
-      [1.5, 0.5, 1], [1.5, 0.5, -1]
-    ];
-    
-    wheelPositions.forEach(pos => {
-      const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-      wheel.position.set(pos[0], pos[1], pos[2]);
-      wheel.rotation.z = Math.PI / 2;
-      vehicleGroup.add(wheel);
-    });
-
-    scene.add(vehicleGroup);
-    camera.position.set(5, 3, 5);
-    controls.target.set(0, 1, 0);
-
-    setLoadingStatus('');
-
-    // Animación
-    const animate = () => {
-      requestAnimationFrame(animate);
-      const n = neuralRef.current;
-      if (n.active) {
-        vehicleGroup.rotation.y += 0.01 * (n.animationSpeed || 1);
-        ambientLight.intensity = 0.3 + (n.brightness || 0.5);
-      } else {
-        ambientLight.intensity = 0.6;
-      }
-      controls.update();
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    // Cleanup
-    sceneRef.current = { scene, camera, renderer, controls };
-    
-    return () => {
-      if (mountRef.current && renderer.domElement) {
-        mountRef.current.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
-    };
+    if (!mountRef.current) return undefined;
+    const host = mountRef.current;
+    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x050b13);
+    const camera = new THREE.PerspectiveCamera(55, host.clientWidth / host.clientHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); renderer.setSize(host.clientWidth, host.clientHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); host.appendChild(renderer.domElement);
+    const ambient = new THREE.AmbientLight(0x4ef3ff, 0.65); const key = new THREE.DirectionalLight(0x9bfaff, 1.5); key.position.set(4, 8, 6); scene.add(ambient, key);
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.MeshBasicMaterial({ color: 0x06111d })); ground.rotation.x = -Math.PI / 2; ground.position.y = -0.05; scene.add(ground);
+    for (let i = -8; i <= 8; i += 2) { const line = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.01, 14), new THREE.MeshBasicMaterial({ color: 0x0aa9d8 })); line.position.set(i, 0.01, 1); scene.add(line); }
+    const vehicle = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.BoxGeometry(4.2, 1, 2), new THREE.MeshPhysicalMaterial({ color: 0x0c2438, metalness: 0.8, roughness: 0.18, emissive: 0x063a54, emissiveIntensity: 0.8 })); body.position.y = 1.05; vehicle.add(body);
+    const cabin = new THREE.Mesh(new THREE.BoxGeometry(2, 0.75, 1.75), new THREE.MeshPhysicalMaterial({ color: 0x02131f, metalness: 0.2, roughness: 0.1, transparent: true, opacity: 0.9 })); cabin.position.set(-0.35, 1.75, 0); vehicle.add(cabin);
+    const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x09d9ff, emissive: 0x05627a, emissiveIntensity: 1.2 });
+    [[-1.5, 0.5, 1], [-1.5, 0.5, -1], [1.5, 0.5, 1], [1.5, 0.5, -1]].forEach(([x, y, z]) => { const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.16, 12, 40), wheelMaterial); wheel.position.set(x, y, z); wheel.rotation.z = Math.PI / 2; vehicle.add(wheel); });
+    scene.add(vehicle); camera.position.set(5.5, 3.1, 5.8); const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.enablePan = false; controls.minDistance = 4; controls.maxDistance = 8; controls.target.set(0, 1, 0);
+    let frame; const animate = () => { frame = requestAnimationFrame(animate); const n = neuralRef.current; vehicle.rotation.y += n.active ? 0.008 * n.animationSpeed : 0.0015; ambient.intensity = n.active ? 0.35 + n.brightness : 0.65; controls.update(); renderer.render(scene, camera); }; animate();
+    const resize = () => { if (!host.clientWidth) return; camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth, host.clientHeight); }; window.addEventListener("resize", resize);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("resize", resize); controls.dispose(); renderer.dispose(); host.removeChild(renderer.domElement); };
   }, []);
 
-  // Valores mostrados: neuronales si la red está activa, si no los de demo.
-  const speed = neuralActive ? Math.round(neural.speed) : 85;
-  const rpm = neuralActive ? Math.round(neural.rpm) : 2850;
-  const torque = neuralActive ? Math.round(neural.torque) : 420;
-  const temp = neuralActive ? Math.round(neural.temperature) : 32;
-  const battery = neuralActive ? Math.round(neural.battery) : systemStatus.battery;
-
+  const speed = neuralActive ? Math.round(neural.speed) : 85; const rpm = neuralActive ? Math.round(neural.rpm) : 2850; const torque = neuralActive ? Math.round(neural.torque) : 420; const temp = neuralActive ? Math.round(neural.temperature) : 32; const battery = neuralActive ? Math.round(neural.battery) : systemStatus.battery;
+  const modes = [{ label: "Eco", icon: Leaf }, { label: "Normal", icon: Activity }, { label: "Sport", icon: Zap }, { label: "Off-Road", icon: Wind }, { label: "Custom", icon: Settings2 }];
   return (
-    <div className="flex flex-col h-full">
-      {/* Header con accesos directos a paneles */}
-      <div className="h-12 sm:h-14 bg-gray-900 flex items-center justify-between px-4 sm:px-6 rounded-md">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <span className="text-sm sm:text-base font-bold text-white">BMW Style</span>
-          <Badge className="bg-blue-600 text-xs">Dashboard</Badge>
-          {neuralActive && (
-            <Badge className="bg-emerald-500 text-xs animate-pulse" data-testid="neural-active-badge">Neural ON</Badge>
-          )}
-        </div>
-        <div className="flex items-center gap-2 sm:gap-4 text-white">
-          {/* Velocidad */}
-          <div className="flex items-center gap-1 text-cyan-400">
-            <Gauge className="w-4 h-4" />
-            <span className="font-bold" data-testid="header-speed">{speed} km/h</span>
-          </div>
-          {/* RPM */}
-          <div className="flex items-center gap-1 text-green-400">
-            <span className="text-xs">RPM</span>
-            <span className="font-bold" data-testid="header-rpm">{rpm.toLocaleString()}</span>
-          </div>
-          {/* Torque */}
-          <div className="flex items-center gap-1 text-orange-400">
-            <span className="text-xs">Torque</span>
-            <span className="font-bold" data-testid="header-torque">{torque} Nm</span>
-          </div>
-          {/* Temperatura */}
-          <div className="flex items-center gap-1 text-red-400">
-            <Thermometer className="w-4 h-4" />
-            <span className="font-bold" data-testid="header-temp">{temp}°C</span>
-          </div>
-          {/* Batería */}
-          <div className="flex items-center gap-1 text-green-400">
-            <Battery className="w-4 h-4" />
-            <span className="font-bold" data-testid="header-battery">{battery}%</span>
-          </div>
-          <Wifi size={14} />
-          <Bluetooth size={14} />
-        </div>
-      </div>
-
-      {/* Main area */}
-      <div className="flex-1 flex flex-col sm:flex-row gap-4 py-4">
-        {/* Vehicle 3D */}
-        <div className="flex-1 flex items-center justify-center p-0 sm:p-2 min-h-[360px]">
-          <div className="relative w-full h-[380px] sm:h-[460px] rounded-md overflow-hidden border border-slate-800">
-            <div ref={mountRef} className="w-full h-full" />
-            {loadingStatus && (
-              <div className="absolute inset-0 flex items-center justify-center text-cyan-200/80 text-xs bg-black/20 pointer-events-none">
-                {loadingStatus}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Status cards */}
-        <div className="w-full sm:w-80 space-y-3">
-          <Card className="bg-slate-900/50 border-slate-700">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <Gauge className="w-5 h-5 text-cyan-400" />
-                <Badge variant="outline" className="text-cyan-400 border-cyan-400">Velocidad</Badge>
-              </div>
-              <div className="text-2xl font-bold text-cyan-400 mb-1" data-testid="card-speed">{speed} km/h</div>
-              <Progress value={Math.min(100, speed / 2)} className="h-2" />
-            </CardContent>
-          </Card>
-          <Card className="bg-slate-900/50 border-slate-700">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <Battery className="w-5 h-5 text-green-400" />
-                <Badge variant="outline" className="text-green-400 border-green-400">Batería</Badge>
-              </div>
-              <div className="text-2xl font-bold text-green-400 mb-1" data-testid="card-battery">{battery}%</div>
-              <Progress value={battery} className="h-2" />
-            </CardContent>
-          </Card>
-          <Card className="bg-slate-900/50 border-slate-700">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <Thermometer className="w-5 h-5 text-orange-400" />
-                <Badge variant="outline" className="text-orange-400 border-orange-400">Temperatura</Badge>
-              </div>
-              <div className="text-2xl font-bold text-orange-400 mb-1" data-testid="card-temp">{temp}°C</div>
-              <Progress value={Math.min(100, temp * 2)} className="h-2" />
-            </CardContent>
-          </Card>
-          
-          {/* Sistemas de Control */}
-          <Card className="bg-slate-900/50 border-slate-700">
-            <CardContent className="p-4">
-              <div className="mb-3">
-                <Badge variant="outline" className="text-blue-400 border-blue-400">Sistemas</Badge>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {/* Botón Notificaciones */}
-                <button
-                  onClick={onOpenNotifications}
-                  className="flex items-center gap-2 px-3 py-2 bg-blue-600/80 hover:bg-blue-600 text-white rounded-md text-xs transition-colors"
-                  title="Abrir Notificaciones"
-                >
-                  <Bell className="w-4 h-4" />
-                  <span>Notifs</span>
-                </button>
-                
-                {/* Botón Ajustes */}
-                <button
-                  onClick={onOpenQuickSettings}
-                  className="flex items-center gap-2 px-3 py-2 bg-cyan-600/80 hover:bg-cyan-600 text-white rounded-md text-xs transition-colors"
-                  title="Abrir Ajustes rápidos"
-                >
-                  <SlidersHorizontal className="w-4 h-4" />
-                  <span>Ajustes</span>
-                </button>
-                
-                {/* Botón Control */}
-                <button
-                  onClick={onOpenVehicleControl}
-                  className="flex items-center gap-2 px-3 py-2 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded-md text-xs transition-colors"
-                  title="Abrir Control del Vehículo"
-                >
-                  <Car className="w-4 h-4" />
-                  <span>Control</span>
-                </button>
-                
-                {/* Botón Tablero */}
-                <button
-                  onClick={onOpenMinimalDashboard}
-                  className="flex items-center gap-2 px-3 py-2 bg-purple-600/80 hover:bg-purple-600 text-white rounded-md text-xs transition-colors"
-                  title="Abrir Tablero Minimal"
-                >
-                  <Gauge className="w-4 h-4" />
-                  <span>Tablero</span>
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Bottom quick functions */}
-      <div className="h-16 sm:h-20 bg-gray-900 border-t border-gray-700 px-2 sm:px-4 py-2 rounded-md">
-        <div className="flex gap-1 sm:gap-2 overflow-x-auto">
-          {["Navegación","Asiento","Luces","Ventanas","Carga","ISOFIX","Seguridad","Conexión","Notificaciones","Voz","Pantalla","Personalización"].map((option, i) => (
-            <div key={i} className="shrink-0 flex flex-col items-center justify-center w-14 sm:w-16 h-10 sm:h-12 text-xs text-gray-300 bg-gray-800 rounded">
-              <span className="text-[10px] leading-none">{option.split(" ")[0]}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <section className="tt-dashboard" data-testid="dashboard-panel">
+      <header className="tt-topbar"><div className="tt-brand"><div className="tt-brand-mark"><Car size={23} /></div><div><strong>Trophy Truck</strong><span>Eléctrico · <b>Online</b></span></div></div><div className="tt-style"><span>BMW Style</span><ChevronRight size={16} /></div><div className="tt-top-actions"><button aria-label="Buscar"><Compass size={18} /></button><button onClick={onOpenNotifications} aria-label="Notificaciones"><Bell size={18} /></button><button className="tt-active-action" onClick={onOpenQuickSettings} aria-label="Actividad"><Activity size={18} /></button><button onClick={onOpenQuickSettings} aria-label="Configuración"><Settings2 size={18} /></button><button onClick={onOpenMinimalDashboard} aria-label="Pantalla completa"><Menu size={18} /></button></div></header>
+      <div className="tt-subnav"><button className="active"><Gauge size={16} /> Dashboard</button><button><Activity size={16} /> Telemetría</button><button onClick={onOpenVehicleControl}><Car size={16} /> Vehículo</button><button><MapPin size={16} /> Ubicación</button><button><Wrench size={16} /> Diagnóstico</button></div>
+      <div className="tt-main-grid"><aside className="tt-left-column"><TelemetryCard icon={Gauge} label="Velocidad" value={speed} unit="km/h" tone="cyan" progress={speed / 2} testId="card-speed" /><TelemetryCard icon={Zap} label="Batería" value={battery} unit="%" tone="green" progress={battery} testId="card-battery" /><TelemetryCard icon={Thermometer} label="Temperatura" value={temp} unit="°C" tone="orange" progress={temp * 2} testId="card-temp" /><div className="tt-mini-stat"><span>Autonomía</span><strong>456 <small>km</small></strong><span className="tt-green"><i />Óptima</span></div></aside>
+        <main className="tt-center-stage"><div className="tt-gauge-row"><GaugeRing type="RPM" value={rpm.toLocaleString()} label="RPM" unit="" tone="green" /><GaugeRing type="TORQUE" value={torque} label="Torque" unit="Nm" tone="orange" /></div><div className="tt-scene"><div ref={mountRef} className="tt-three-canvas" /><div className="tt-speed-display"><strong data-testid="header-speed">{speed}</strong><span>km/h</span></div><div className="tt-scene-caption"><span><Wifi size={13} /> GPS conectado</span><span>Modo {driveMode}</span></div></div><div className="tt-drive-selector"><span>Modo: Conducción</span>{modes.map(({ label, icon: Icon }) => <button key={label} className={driveMode === label ? "active" : ""} onClick={() => setDriveMode(label)}><Icon size={14} />{label}</button>)}</div></main>
+        <aside className="tt-right-column"><StatusCard icon={Wind} label="Reconocimiento" value="Activo" /><StatusCard icon={ShieldCheck} label="Seguridad" value="Protegido" /><StatusCard icon={MapPin} label="Geocercas" value="2 activas" /><StatusCard icon={Activity} label="Estado" value="Óptimo" /><div className="tt-control-row"><button onClick={onOpenQuickSettings}><SlidersHorizontal size={17} /> Ajustes</button><button onClick={onOpenVehicleControl}><Car size={17} /> Control</button></div></aside></div>
+      <footer className="tt-dock"><button><Play size={17} /><span>Media</span></button><button><Navigation size={18} /><span>Navegación</span></button><button><Phone size={17} /><span>Teléfono</span></button><button className="tt-dock-car" onClick={onOpenVehicleControl}><Car size={23} /></button><button><Sparkles size={17} /><span>Confort</span></button><button><SlidersHorizontal size={17} /><span>Controles</span></button><button><Mic size={17} /><span>Asistente</span></button></footer>
+    </section>
   );
 };
 
