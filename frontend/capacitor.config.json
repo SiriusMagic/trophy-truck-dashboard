@@ -1,0 +1,8 @@
+{
+  "appId": "io.github.siriusmagic.trophytruck",
+  "appName": "Trophy Truck",
+  "webDir": "build",
+  "android": {
+    "backgroundColor": "#0a0a0a"
+  }
+}
