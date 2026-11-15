@@ -1,6 +1,6 @@
 import { Bell, AlertTriangle, Usb, X } from "lucide-react";
 
-const NotificationsPanel = ({ open, onClose, items = [] }) => {
+const NotificationsPanel = ({ open, onClose, items = [], inline = false }) => {
   const defaultItems = items.length
     ? items
     : [
@@ -10,9 +10,7 @@ const NotificationsPanel = ({ open, onClose, items = [] }) => {
 
   return (
     <div
-      className={`fixed inset-y-0 left-0 z-40 w-80 max-w-[85vw] bg-slate-900/95 border-r border-slate-800 transition-transform duration-300 ease-in-out ${
-        open ? "translate-x-0" : "-translate-x-full"
-      }`}
+      className={inline ? "inline-tool" : `fixed inset-y-0 left-0 z-40 w-80 max-w-[85vw] bg-slate-900/95 border-r border-slate-800 transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "-translate-x-full"}`}
       aria-hidden={!open}
     >
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">

@@ -1,6 +1,6 @@
 # trophy-truck-dashboard
 
-Panel de control (prototipo) para un trophy truck eléctrico: 24 módulos y un tablero con modelo 3D (Three.js). 100 % frontend con datos simulados en `frontend/src/data/mockData.js`. Es la versión unificada de los antiguos repos trophy-truck-ui-*.
+Panel de control para un trophy truck eléctrico: tablero permanente con modelo 3D y 21 funciones integradas en un panel lateral. 100 % frontend con datos simulados en `frontend/src/data/mockData.js`.
 
 ## Comandos
 
@@ -8,7 +8,7 @@ Panel de control (prototipo) para un trophy truck eléctrico: 24 módulos y un t
 cd frontend
 yarn install
 yarn dev            # desarrollo en http://localhost:3000
-yarn test:e2e       # abre los 24 módulos y el tablero 3D en Chromium (Playwright)
+yarn test:e2e       # verifica los 21 módulos integrados y el tablero 3D
 yarn build
 docker compose up --build   # desde la raíz, sirve con Nginx
 ```

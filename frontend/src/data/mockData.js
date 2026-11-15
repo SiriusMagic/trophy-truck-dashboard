@@ -2,6 +2,7 @@ import { Mountain, Car, Target, Zap } from 'lucide-react';
 
 export const mockData = {
   speed: 85, // km/h
+  rpm: 2850,
   batteryLevel: 78, // percentage
   batteryTemp: 32.5, // celsius
   torque: 280, // Nm

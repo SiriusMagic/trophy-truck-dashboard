@@ -17,11 +17,9 @@ Interfaz futurista de un trophy truck eléctrico. Frontend React (CRA+CRACO) con
   - `DEPLOY.md` (Docker, servidor Linux, cloud, verificación).
   - `requirements.txt` ahora incluye `uvicorn[standard]`. `package.json` con scripts `dev`/`serve`.
   - Verificado: instalación limpia de backend en venv nuevo + uvicorn sirve `/api/` y `/docs`; build de producción del frontend compila OK.
-- Sesiones previas: eliminado módulo BionicCooling; fix compilación `ui/button.jsx`. `NeuronsSystem.jsx` scaffolded (no cableado).
+- Sesiones previas: eliminado módulo BionicCooling; fix compilación `ui/button.jsx`. El sistema Neural se retiró del producto.
 
 ## Backlog priorizado
-- **P0**: Integrar `NeuronsSystem.jsx` (NeuronsProvider/Context) para controlar elementos interactivos (sliders/botones) del dashboard. (PENDIENTE — propuesto pero el usuario pivotó a DevOps).
-- **P1**: Testing frontend completo de interacciones neuronales.
 - **P2**: Backend real + websockets para telemetría en vivo, reemplazar mockData.
 - **P2**: CORS_ORIGINS restringido y MongoDB con auth para producción.
 

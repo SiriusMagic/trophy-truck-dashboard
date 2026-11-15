@@ -1,40 +1,45 @@
-// Abre cada módulo del panel y el tablero 3D en un navegador real, sin errores.
 import { expect, test } from "@playwright/test";
 
-const MODULOS = [
-  ["driving", "Conducción"], ["crab-mode", "Modo Cangrejo"], ["aerodinamica", "Aerodinámica"],
-  ["tires", "Neumáticos"], ["enhanced-tires", "Neumáticos Pro"], ["traction", "Tracción"],
-  ["suspension", "Suspensión"], ["transmission", "Transmisión"], ["power", "Potencia"],
-  ["autonomy", "Autonomía"], ["compressor", "Compresor"], ["security", "Seguridad"],
-  ["viden", "Viden"], ["awareness", "Sensores"], ["codes", "Códigos"], ["comfort", "Confort"],
-  ["uv-hygiene", "Higienización UV"], ["smart", "Inteligente"], ["treer", "TreeR"],
-  ["monitoring", "Monitoreo"], ["diagnostics", "Diagnósticos"],
-];
+const GROUPS = {
+  driving: ["driving", "crab-mode", "aerodinamica", "tires", "enhanced-tires", "traction", "suspension", "transmission"],
+  energy: ["power", "autonomy", "compressor"],
+  safety: ["security", "viden", "awareness", "codes"],
+  comfort: ["comfort", "uv-hygiene", "smart", "treer"],
+  diagnostics: ["monitoring", "diagnostics"],
+};
 
 test.beforeEach(async ({ page }) => {
   page.errores = [];
-  page.on("pageerror", (e) => page.errores.push(e.message));
-  page.on("console", (m) => { if (m.type() === "error" && !/WebGL|GPU|GL_/i.test(m.text())) page.errores.push(m.text()); });
+  page.on("pageerror", (error) => page.errores.push(error.message));
+  page.on("console", (message) => { if (message.type() === "error" && !/WebGL|GPU|GL_/i.test(message.text())) page.errores.push(message.text()); });
   await page.goto("./");
 });
 
-test("cada módulo del menú se abre sin errores", async ({ page }) => {
-  await page.getByRole("button", { name: "Pantalla principal" }).click();
-  for (const [id, nombre] of MODULOS) {
-    const launcherCard = page.locator(".tt-module-card").filter({ hasText: nombre });
-    if (await launcherCard.count()) await launcherCard.click();
-    else await page.getByTestId(`nav-${id}`).click();
-    await expect(page.getByText(nombre).first()).toBeVisible();
-    // El módulo se descarga al abrirlo: espera a que termine de cargar y dibuje algo.
-    await expect(page.getByText("Cargando módulo…")).toHaveCount(0);
-    await expect(page.locator("main")).not.toBeEmpty();
+test("el tablero permanece visible mientras se abre cada sistema", async ({ page }) => {
+  for (const [group, modules] of Object.entries(GROUPS)) {
+    await page.getByTestId(`category-${group}`).click();
+    await page.getByTestId(`open-${modules[0]}`).click();
+    for (const id of modules.slice(1)) await page.getByLabel("Cambiar función").selectOption(id);
+    await expect(page.getByTestId("dashboard-panel")).toBeVisible();
+    await expect(page.getByTestId("card-speed")).toHaveText("85");
+    await expect(page.getByTestId("system-panel")).toBeVisible();
   }
   expect(page.errores).toEqual([]);
 });
 
-test("el tablero muestra la telemetría y el modelo 3D", async ({ page }) => {
-  await page.getByRole("button", { name: "Tablero" }).click();
-  await expect(page.getByTestId("card-speed")).toHaveText("85km/h");
+test("el buscador encuentra funciones sin cambiar de pantalla", async ({ page }) => {
+  await page.getByRole("button", { name: "Buscar funciones" }).click();
+  await page.getByRole("searchbox", { name: "Buscar función" }).fill("potencia");
+  await expect(page.getByTestId("open-power")).toBeVisible();
+  await expect(page.getByTestId("open-driving")).toHaveCount(0);
+  await page.getByTestId("open-power").click();
+  await expect(page.getByTestId("dashboard-panel")).toBeVisible();
+  await expect(page.getByTestId("module-power")).toBeVisible();
+});
+
+test("el tablero muestra telemetría y vehículo 3D", async ({ page }) => {
+  await expect(page.getByTestId("card-speed")).toHaveText("85");
   await expect(page.locator("canvas").first()).toBeVisible();
+  await expect(page.getByTestId("category-driving")).toBeVisible();
   expect(page.errores).toEqual([]);
 });
