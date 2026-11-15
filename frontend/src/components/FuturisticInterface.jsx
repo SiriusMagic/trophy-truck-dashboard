@@ -1,9 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import {
-  Eye,
   Shield,
   Move,
-  MapPin,
   Wind,
   CircleDot,
   Target,
@@ -31,11 +29,9 @@ import NotificationsPanel from "./NotificationsPanel";
 import VehicleControlPanel from "./VehicleControlPanel";
 
 // Cada módulo se descarga solo cuando se abre (carga inicial más rápida).
-const ReconnaissanceSystem = lazy(() => import("./ReconnaissanceSystem"));
 const SecuritySystem = lazy(() => import("./SecuritySystem"));
 const CrabModeSystem = lazy(() => import("./CrabModeSystem"));
 const VidenSystem = lazy(() => import("./VidenSystem"));
-const GeocercasSystem = lazy(() => import("./GeocercasSystem"));
 const AerodinamicaSystem = lazy(() => import("./AerodinamicaSystem"));
 const TireSystem = lazy(() => import("./TireSystem"));
 const EnhancedTireSystem = lazy(() => import("./EnhancedTireSystem"));
@@ -74,11 +70,9 @@ const FuturisticInterface = () => {
   const [currentGear, setCurrentGear] = useState(2);
 
   const sections = useMemo(() => [
-    { id: "reconnaissance", name: "Reconocimiento", icon: Eye },
     { id: "security", name: "Seguridad", icon: Shield },
     { id: "crab-mode", name: "Modo Cangrejo", icon: Move },
     { id: "viden", name: "Viden", icon: Shield },
-    { id: "geocercas", name: "Geocercas", icon: MapPin },
     { id: "aerodinamica", name: "Aerodinámica", icon: Wind },
     { id: "tires", name: "Neumáticos", icon: CircleDot },
     { id: "enhanced-tires", name: "Neumáticos Pro", icon: Target },
@@ -111,6 +105,8 @@ const FuturisticInterface = () => {
   const renderActive = () => {
     if (!activeSection) return (
       <DashboardPanel
+        sections={sections}
+        onOpenSection={setActiveSection}
         onOpenNotifications={() => setPanelOpen('notifications')}
         onOpenQuickSettings={() => setPanelOpen('quick')}
         onOpenVehicleControl={() => setBottomOpen(true)}
@@ -118,11 +114,9 @@ const FuturisticInterface = () => {
       />
     );
     switch (activeSection) {
-      case "reconnaissance": return <ReconnaissanceSystem {...common} />;
       case "security": return <SecuritySystem {...common} />;
       case "crab-mode": return <CrabModeSystem {...common} />;
       case "viden": return <VidenSystem />;
-      case "geocercas": return <GeocercasSystem />;
       case "aerodinamica": return <AerodinamicaSystem />;
       case "tires": return <TireSystem {...common} />;
       case "enhanced-tires": return <EnhancedTireSystem {...common} />;
