@@ -15,7 +15,6 @@ Panel de control futurista para un **trophy truck eléctrico** (camioneta todote
 - **Seguridad, códigos y geocercas**.
 - **Confort e higienización UV**.
 - **Diagnóstico y monitoreo de parámetros**.
-- **Sistema neural**: red neuronal visual con controles.
 
 ## Cómo usarla
 

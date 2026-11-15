@@ -19,9 +19,7 @@ import {
   Gauge,
   RotateCcw,
   Smartphone,
-  Brain,
 } from "lucide-react";
-import NeuronsSystem from "./NeuronsSystem";
 import { mockData } from "../data/mockData";
 import MinimalDriverDashboard from "./MinimalDriverDashboard";
 import QuickSettingsPanel from "./QuickSettingsPanel";
@@ -69,30 +67,27 @@ const FuturisticInterface = () => {
   const [aiPowerActive, setAiPowerActive] = useState(false);
   const [currentGear, setCurrentGear] = useState(2);
 
-  const sections = useMemo(() => [
-    { id: "security", name: "Seguridad", icon: Shield },
-    { id: "crab-mode", name: "Modo Cangrejo", icon: Move },
-    { id: "viden", name: "Viden", icon: Shield },
-    { id: "aerodinamica", name: "Aerodinámica", icon: Wind },
-    { id: "tires", name: "Neumáticos", icon: CircleDot },
-    { id: "enhanced-tires", name: "Neumáticos Pro", icon: Target },
-    { id: "compressor", name: "Compresor", icon: ArrowUp },
-    { id: "uv-hygiene", name: "Higienización UV", icon: Sparkles },
-    { id: "monitoring", name: "Monitoreo", icon: Activity },
-    { id: "codes", name: "Códigos", icon: AlertTriangle },
-    { id: "treer", name: "TreeR", icon: Leaf },
-    { id: "autonomy", name: "Autonomía", icon: Battery },
-    { id: "traction", name: "Tracción", icon: ArrowLeftRight },
-    { id: "smart", name: "Inteligente", icon: Sparkles },
-    { id: "comfort", name: "Confort", icon: Settings },
-    { id: "driving", name: "Conducción", icon: Car },
-    { id: "power", name: "Potencia", icon: Battery },
-    { id: "suspension", name: "Suspensión", icon: Mountain },
-    { id: "awareness", name: "Sensores", icon: Radar },
-    { id: "diagnostics", name: "Diagnósticos", icon: Activity },
-    { id: "transmission", name: "Transmisión", icon: Gauge },
-    { id: "neural", name: "Sistema Neural", icon: Brain }
+  const moduleGroups = useMemo(() => [
+    { id: "driving", name: "Conducción y chasis", description: "Control dinámico, neumáticos y terreno", icon: Car, modules: [
+      { id: "driving", name: "Conducción", icon: Car }, { id: "crab-mode", name: "Modo Cangrejo", icon: Move },
+      { id: "aerodinamica", name: "Aerodinámica", icon: Wind }, { id: "tires", name: "Neumáticos", icon: CircleDot },
+      { id: "enhanced-tires", name: "Neumáticos Pro", icon: Target }, { id: "traction", name: "Tracción", icon: ArrowLeftRight },
+      { id: "suspension", name: "Suspensión", icon: Mountain }, { id: "transmission", name: "Transmisión", icon: Gauge },
+    ] },
+    { id: "energy", name: "Energía y potencia", description: "Batería, motores y rendimiento", icon: Battery, modules: [
+      { id: "power", name: "Potencia", icon: Battery }, { id: "autonomy", name: "Autonomía", icon: Battery }, { id: "compressor", name: "Compresor", icon: ArrowUp },
+    ] },
+    { id: "safety", name: "Seguridad y sensores", description: "Protección, visión y alertas", icon: Shield, modules: [
+      { id: "security", name: "Seguridad", icon: Shield }, { id: "viden", name: "Viden", icon: Shield }, { id: "awareness", name: "Sensores", icon: Radar }, { id: "codes", name: "Códigos", icon: AlertTriangle },
+    ] },
+    { id: "comfort", name: "Confort e inteligente", description: "Experiencia, asistencia y servicios", icon: Sparkles, modules: [
+      { id: "comfort", name: "Confort", icon: Settings }, { id: "uv-hygiene", name: "Higienización UV", icon: Sparkles }, { id: "smart", name: "Inteligente", icon: Sparkles }, { id: "treer", name: "TreeR", icon: Leaf },
+    ] },
+    { id: "diagnostics", name: "Diagnóstico y estado", description: "Monitoreo general y mantenimiento", icon: Activity, modules: [
+      { id: "monitoring", name: "Monitoreo", icon: Activity }, { id: "diagnostics", name: "Diagnósticos", icon: Activity },
+    ] },
   ], []);
+  const sections = useMemo(() => moduleGroups.flatMap((group) => group.modules), [moduleGroups]);
 
   const [activeSection, setActiveSection] = useState(null);
 
@@ -106,6 +101,7 @@ const FuturisticInterface = () => {
     if (!activeSection) return (
       <DashboardPanel
         sections={sections}
+        moduleGroups={moduleGroups}
         onOpenSection={setActiveSection}
         onOpenNotifications={() => setPanelOpen('notifications')}
         onOpenQuickSettings={() => setPanelOpen('quick')}
@@ -157,7 +153,6 @@ const FuturisticInterface = () => {
           disabled={!isLandscape}
         />
       );
-      case "neural": return <NeuronsSystem />;
       default: return null;
     }
   };
@@ -182,15 +177,15 @@ const FuturisticInterface = () => {
             </div>
           </div>
           <nav className="flex-1 overflow-y-auto p-2 space-y-1">
-            {sections.map((s) => {
-              const Icon = s.icon; const active = s.id === activeSection;
-              return (
-                <button key={s.id} onClick={() => setActiveSection(s.id)} data-testid={`nav-${s.id}`} className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${active ? "bg-cyan-600 text-white" : "text-slate-300 hover:bg-slate-800"}`}>
-                  <Icon className="w-4 h-4" />
-                  <span className="truncate">{s.name}</span>
-                </button>
-              );
-            })}
+            {moduleGroups.map((group) => (
+              <div key={group.id} className="tt-sidebar-group">
+                <div className="px-3 pt-3 pb-1 text-[10px] uppercase tracking-wider text-cyan-400/70">{group.name}</div>
+                {group.modules.map((s) => {
+                  const Icon = s.icon; const active = s.id === activeSection;
+                  return <button key={s.id} onClick={() => setActiveSection(s.id)} data-testid={`nav-${s.id}`} className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${active ? "bg-cyan-600 text-white" : "text-slate-300 hover:bg-slate-800"}`}><Icon className="w-4 h-4" /><span className="truncate">{s.name}</span></button>;
+                })}
+              </div>
+            ))}
           </nav>
           <div className="px-3 py-2 text-xs text-slate-500 border-t border-slate-800">Horizontal obligatorio</div>
         </aside>

@@ -2,10 +2,13 @@
 import { expect, test } from "@playwright/test";
 
 const MODULOS = [
-  "Reconocimiento", "Seguridad", "Modo Cangrejo", "Viden", "Geocercas", "Aerodinámica",
-  "Neumáticos", "Neumáticos Pro", "Compresor", "Higienización UV", "Monitoreo", "Códigos",
-  "TreeR", "Autonomía", "Tracción", "Inteligente", "Confort", "Conducción", "Potencia",
-  "Suspensión", "Sensores", "Diagnósticos", "Transmisión", "Sistema Neural",
+  ["driving", "Conducción"], ["crab-mode", "Modo Cangrejo"], ["aerodinamica", "Aerodinámica"],
+  ["tires", "Neumáticos"], ["enhanced-tires", "Neumáticos Pro"], ["traction", "Tracción"],
+  ["suspension", "Suspensión"], ["transmission", "Transmisión"], ["power", "Potencia"],
+  ["autonomy", "Autonomía"], ["compressor", "Compresor"], ["security", "Seguridad"],
+  ["viden", "Viden"], ["awareness", "Sensores"], ["codes", "Códigos"], ["comfort", "Confort"],
+  ["uv-hygiene", "Higienización UV"], ["smart", "Inteligente"], ["treer", "TreeR"],
+  ["monitoring", "Monitoreo"], ["diagnostics", "Diagnósticos"],
 ];
 
 test.beforeEach(async ({ page }) => {
@@ -16,9 +19,11 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("cada módulo del menú se abre sin errores", async ({ page }) => {
-  const menu = page.locator("aside, nav").first();
-  for (const nombre of MODULOS) {
-    await menu.getByText(nombre, { exact: true }).click();
+  await page.getByRole("button", { name: "Pantalla principal" }).click();
+  for (const [id, nombre] of MODULOS) {
+    const launcherCard = page.locator(".tt-module-card").filter({ hasText: nombre });
+    if (await launcherCard.count()) await launcherCard.click();
+    else await page.getByTestId(`nav-${id}`).click();
     await expect(page.getByText(nombre).first()).toBeVisible();
     // El módulo se descarga al abrirlo: espera a que termine de cargar y dibuje algo.
     await expect(page.getByText("Cargando módulo…")).toHaveCount(0);
@@ -28,8 +33,8 @@ test("cada módulo del menú se abre sin errores", async ({ page }) => {
 });
 
 test("el tablero muestra la telemetría y el modelo 3D", async ({ page }) => {
-  await page.getByText("Click para Dashboard").click();
-  await expect(page.getByText("85 km/h").first()).toBeVisible();
+  await page.getByRole("button", { name: "Tablero" }).click();
+  await expect(page.getByTestId("card-speed")).toHaveText("85km/h");
   await expect(page.locator("canvas").first()).toBeVisible();
   expect(page.errores).toEqual([]);
 });
